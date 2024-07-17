@@ -73,7 +73,7 @@ Logo logos[] = {
 			"       .--             --.",
 			"          .---.....----.",
 			NULL
-		},
+		}
 	},
 	{
 		"OpenBSD",
@@ -88,7 +88,7 @@ Logo logos[] = {
 			"\033[1;33m  -<|  F         __     .-<        \033[1;37m(_)",
 			"\033[1;33m    | /       .-'\033[1;37m. \033[1;33m.  /\033[1;37m-. \033[1;37m___",
 			"    J \\      <    \033[1;37m\\ \033[1;33m | | \033[1;36mO\033[1;37m\\\033[1;33m|.-' \033[1;37m _",
-			"\033[1;33m  _J \\  .-    \\033[1;37m/ \033[1;36mO \033[1;37m| \033[1;33m| \\  |\033[1;33mF    \033[1;37m(_)",
+			"\033[1;33m  _J \\  .-    \033[1;37m/ \033[1;36mO \033[1;37m| \033[1;33m| \\  |\033[1;33mF    \033[1;37m(_)",
 			"\033[1;33m '-F  -<_.     \\   .-'  -' L__",
 			"__J  _   _.     >-'  \033[1;33m)\033[1;31m._.   \033[1;33m|-'",
 			"\033[1;33m -|.'   /_.          \033[1;31m\\_|  \033[1;33m F",
@@ -102,7 +102,7 @@ Logo logos[] = {
 			"      \\ (  \\",
 			"       .\\",
 			NULL
-		},
+		}
 	},
 	{
 		"NetBSD",
@@ -125,7 +125,7 @@ Logo logos[] = {
 			"             :Ms",
 			"              :Ms",
 			NULL
-		},
+		}
 	},
 	{
 		"DragonFly",
@@ -146,7 +146,7 @@ Logo logos[] = {
 			"              | |",
 			"              `|'",
 			NULL
-		},
+		}
 	},
 };
 
@@ -154,11 +154,7 @@ void print_logo(const char *system) {
 	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
 		if (strcmp(system, logos[i].name) == 0) {
 			for (int j = 0; logos[i].lines[j] != NULL; j++) {
-				if (color_flag) {
-					printf("%s%s\n", logos[i].lines[j], CEND);
-				} else {
-					printf("%s\n", logos[i].lines[j]);
-				}
+				printf("%s%s\n", logos[i].lines[j], CEND);
 			}
 			return;
 		}
