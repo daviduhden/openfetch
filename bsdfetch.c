@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2022 - 2023 jhx <jhx0x00@gmail.com>
+ * Copyright (c) 2024 David Uhden Collado <david@uhden.dev>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -341,7 +342,7 @@ static void get_packages(void) {
 #if defined(__OpenBSD__) || defined(__NetBSD__)
 	const char *const cmd = "/usr/sbin/pkg_info";
 
-#elif defined(__DragonFly__) || defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
 	const char *const cmd = "/usr/sbin/pkg info";
 
 #else
