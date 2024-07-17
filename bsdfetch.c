@@ -49,7 +49,7 @@ static int color_flag;   /* 1 => color; 0 => no color in labels */
 // Logos with colors
 typedef struct {
 	const char *name;
-	const char *lines[20];
+	const char *lines[30];
 	const char *colors[5];
 } Logo;
 
