@@ -192,7 +192,7 @@ void replace_placeholder_with_color(char *dest, const char *src, size_t size) {
 		snprintf(placeholder, sizeof(placeholder), "${c%d}", k + 1);
 
 		while ((pos = strstr(dest, placeholder)) != NULL) {
-			len = pos - dest;
+			len = (size_t)(pos - dest);
 			dest[len] = '\0';
 			strncat(dest, dynamic_colors[k], size - len - 1);
 			strncat(dest, pos + strlen(placeholder), size - strlen(dest) - 1);
