@@ -158,7 +158,7 @@ Logo logos[] = {
 };
 
 void set_colors(int num_colors, const char *colors[]) {
-	for (int i = 0; i < num_colors; i++) {
+	for (int i = 0; i < num_colors && i < 10; i++) {
 		dynamic_colors[i] = colors[i];
 	}
 }
@@ -181,7 +181,7 @@ void detect_and_set_colors(void) {
 
 void replace_placeholder_with_color(char *dest, const char *src, size_t size) {
 	char *pos;
-	int len;
+	size_t len;
 
 	strncpy(dest, src, size);
 	dest[size - 1] = '\0';
