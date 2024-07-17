@@ -184,8 +184,7 @@ void replace_placeholder_with_color(char *line) {
 	char *pos;
 	size_t len;
 
-	strcpy(buffer, line);
-	buffer[255] = '\0';
+	strlcpy(buffer, line, sizeof(buffer));
 
 	for (int k = 0; k < 10; k++) {
 		if (dynamic_colors[k] == NULL || dynamic_colors[k][0] == '\0') continue;
@@ -193,14 +192,14 @@ void replace_placeholder_with_color(char *line) {
 		snprintf(placeholder, sizeof(placeholder), "${c%d}", k + 1);
 
 		while ((pos = strstr(buffer, placeholder)) != NULL) {
-			len = pos - buffer;
+			len = (size_t)(pos - buffer);
 			buffer[len] = '\0';
-			strcat(buffer, dynamic_colors[k]);
-			strcat(buffer, pos + strlen(placeholder));
+			strlcat(buffer, dynamic_colors[k], sizeof(buffer));
+			strlcat(buffer, pos + strlen(placeholder), sizeof(buffer));
 		}
 	}
 
-	strcpy(line, buffer);
+	strlcpy(line, buffer, sizeof(buffer));
 }
 
 void print_logo(const char *system) {
@@ -209,8 +208,7 @@ void print_logo(const char *system) {
 			for (int j = 0; logos[i].lines[j] != NULL; j++) {
 				if (color_flag) {
 					char line[256];
-					strncpy(line, logos[i].lines[j], sizeof(line));
-					line[255] = '\0';
+					strlcpy(line, logos[i].lines[j], sizeof(line));
 					replace_placeholder_with_color(line);
 					printf("%s%s\n", line, CEND);
 				} else {
