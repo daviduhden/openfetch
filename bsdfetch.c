@@ -55,114 +55,106 @@ typedef struct {
 } Logo;
 
 Logo logos[] = {
-	{
-		"FreeBSD",
-		{
-			"   ${c2} ",
-			"${c1}`",
-			"  ${c2}` `.....---...${c1}....--.",
-			"   -/",
-			"  ${c2}+o   .--         ${c1}/y:      +.",
-			"  ${c2} yo:.            ${c1}:o      +-",
-			"    ${c2}y/               ${c1}-/   -o/",
-			"   ${c2}.-                  ${c1}::/sy+:.",
-			"   ${c2}/                     ${c1}--  /",
-			"  ${c2}:                          ${c1}:",
-			"  ${c2}:                          ${c1}:",
-			"   ${c2}/                          ${c1}/",
-			"   ${c2}.-                        ${c1}-.",
-			"    ${c2}--                      ${c1}-.",
-			"     ${c2}:                  ${c1}:",
-			"       .--             --.",
-			"          .---.....----.",
-			NULL
-		},
-		{
-			WHITE, RED, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED
-		}
-	},
-	{
-		"OpenBSD",
-		{
-			"${c3}                                     _",
-			"                                    (_)",
-			"${c1}              |    .",
-			"${c1}          .   |L  /|   .         ${c3} _",
-			"${c1}      _ . |\\ _| \\--+._/| .       ${c3}(_)",
-			"${c1}     / ||\\| Y J  )   / |/| ./",
-			"    J  |)'( |         F.'/       ${c3} _",
-			"${c1}  -<|  F         __     .-<        ${c3}(_)",
-			"${c1}    | /       .-'${c3}. ${c1}.  /${c3}-. ${c1}L___",
-			"    J \\      <    ${c3}\\ ${c1} | | ${c5}O${c3}\\${c1}|.-' ${c3} _",
-			"${c1}  _J \\  .-    \\${c3}/ ${c5}O ${c3}| ${c1}| \\  |${c1}F    ${c3}(_)",
-			"${c1} '-F  -<_.     \\   .-'  -' L__",
-			"__J  _   _.     >-'  ${c1})${c4}._.   ${c1}|-'",
-			"${c1} -|.'   /_.          ${c4}\\_|  ${c1} F",
-			"  /.-   .                _.<",
-			" /'    /.'             .'  \\",
-			"  /L  /'   |/      _.-'-\\",
-			" /'J       ___.---'\\|",
-			"   |\\  .--' V  | . ",
-			"   |/. -.     ._)",
-			"      / .-.\\",
-			"      \\ (  \\",
-			"       .\\",
-			NULL
-		},
-		{
-			YELLOW, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED
-		}
-	},
-	{
-		"NetBSD",
-		{
-			"${c1}                     -/oshdmNMNdhyo+:-",
-			"${c2}y${c1}/s+:-`    .-:+oydNMMMMNhs/-`",
-			"${c2}-m+${c1}NMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-",
-			" ${c2}-m+${c1}NMMMMMMMMMMMMMMMMMMMMmy+:",
-			"  ${c2}-N/${c1}dMMMMMMMMMMMMMMMds:",
-			"   ${c2}-N/${c1}hMMMMMMMMMmho:",
-			"    ${c2}-N/${c1}-:/++/:.",
-			"${c2}     :M+",
-			"      :Mo",
-			"       :Ms",
-			"        :Ms",
-			"         :Ms",
-			"          :Ms",
-			"           :Ms",
-			"            :Ms",
-			"             :Ms",
-			"              :Ms",
-			NULL
-		},
-		{
-			MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE
-		}
-	},
-	{
-		"DragonFly",
-		{
-			"${c2},--,           ${c1}|           ${c2},--,",
-			"${c2}|   -,       ${c1},^,       ${c2},-'   |",
-			"${c2} ,    -,   ${c3}(/ \\)   ${c2},-'    ,'",
-			"${c2}   -,    -,${c1}/   \\${c2},-'    ,-'",
-			"${c2}      ------${c1}(   )${c2}------'",
-			"${c2}  ,----------${c1}(   )${c2}----------,",
-			"${c2} |        _,-${c1}(   )${c2}-,_        |",
-			"${c2}  -,__,-'   ${c1}\\   /${c2}   -,__,-'",
-			"${c1}              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              |'",
-			NULL
-		},
-		{
-			RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED
-		}
-	},
+    {
+        "FreeBSD",
+        {
+            "   ${c2} ",
+            "${c1}`",
+            "  ${c2}` `.....---...${c1}....--.",
+            "   -/",
+            "  ${c2}+o   .--         ${c1}/y:      +.",
+            "  ${c2} yo:.            ${c1}:o      +-",
+            "    ${c2}y/               ${c1}-/   -o/",
+            "   ${c2}.-                  ${c1}::/sy+:.",
+            "   ${c2}/                     ${c1}--  /",
+            "  ${c2}:                          ${c1}:",
+            "  ${c2}:                          ${c1}:",
+            "   ${c2}/                          ${c1}/",
+            "   ${c2}.-                        ${c1}-.",
+            "    ${c2}--                      ${c1}-.",
+            "     ${c2}:                  ${c1}:",
+            "       .--             --.",
+            "          .---.....----.",
+            NULL
+        },
+        {WHITE, RED, GREEN}
+    },
+    {
+        "OpenBSD",
+        {
+            "${c3}                                     _",
+            "                                    (_)",
+            "${c1}              |    .",
+            "${c1}          .   |L  /|   .         ${c3} _",
+            "${c1}      _ . |\\ _| \\--+._/| .       ${c3}(_)",
+            "${c1}     / ||\\| Y J  )   / |/| ./",
+            "    J  |)'( |         F.'/       ${c3} _",
+            "${c1}  -<|  F         __     .-<        ${c3}(_)",
+            "${c1}    | /       .-'${c3}. ${c1}.  /${c3}-. ${c1}L___",
+            "    J \\      <    ${c3}\\ ${c1} | | ${c5}O${c3}\\${c1}|.-' ${c3} _",
+            "${c1}  _J \\  .-    \\${c3}/ ${c5}O ${c3}| ${c1}| \\  |${c1}F    ${c3}(_)",
+            "${c1} '-F  -<_.     \\   .-'  -' L__",
+            "__J  _   _.     >-'  ${c1})${c4}._.   ${c1}|-'",
+            "${c1} -|.'   /_.          ${c4}\\_|  ${c1} F",
+            "  /.-   .                _.<",
+            " /'    /.'             .'  \\",
+            "  /L  /'   |/      _.-'-\\",
+            " /'J       ___.---'\\|",
+            "   |\\  .--' V  | . ",
+            "   |/. -.     ._)",
+            "      / .-.\\",
+            "      \\ (  \\",
+            "       .\\",
+            NULL
+        },
+        {YELLOW, WHITE, CYAN, RED}
+    },
+    {
+        "NetBSD",
+        {
+            "${c1}                     -/oshdmNMNdhyo+:-",
+            "${c2}y${c1}/s+:-`    .-:+oydNMMMMNhs/-`",
+            "${c2}-m+${c1}NMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-",
+            " ${c2}-m+${c1}NMMMMMMMMMMMMMMMMMMMMmy+:",
+            "  ${c2}-N/${c1}dMMMMMMMMMMMMMMMds:",
+            "   ${c2}-N/${c1}hMMMMMMMMMmho:",
+            "    ${c2}-N/${c1}-:/++/:.",
+            "${c2}     :M+",
+            "      :Mo",
+            "       :Ms",
+            "        :Ms",
+            "         :Ms",
+            "          :Ms",
+            "           :Ms",
+            "            :Ms",
+            "             :Ms",
+            "              :Ms",
+            NULL
+        },
+        {MAGENTA, WHITE}
+    },
+    {
+        "DragonFly",
+        {
+            "${c2},--,           ${c1}|           ${c2},--,",
+            "${c2}|   -,       ${c1},^,       ${c2},-'   |",
+            "${c2} ,    -,   ${c3}(/ \\)   ${c2},-'    ,'",
+            "${c2}   -,    -,${c1}/   \\${c2},-'    ,-'",
+            "${c2}      ------${c1}(   )${c2}------'",
+            "${c2}  ,----------${c1}(   )${c2}----------,",
+            "${c2} |        _,-${c1}(   )${c2}-,_        |",
+            "${c2}  -,__,-'   ${c1}\\   /${c2}   -,__,-'",
+            "${c1}              | |",
+            "              | |",
+            "              | |",
+            "              | |",
+            "              | |",
+            "              | |",
+            "              |'",
+            NULL
+        },
+        {RED, WHITE}
+    },
 };
 
 void set_colors(int num_colors, const char *colors[]) {
@@ -172,19 +164,19 @@ void set_colors(int num_colors, const char *colors[]) {
 }
 
 void detect_and_set_colors(void) {
-    #if defined(__FreeBSD__)
-        const char *freebsd_colors[] = {WHITE, RED, GREEN};
-        set_colors(3, freebsd_colors);
-    #elif defined(__OpenBSD__)
-        const char *openbsd_colors[] = {YELLOW, WHITE, CYAN, RED};
-        set_colors(4, openbsd_colors);
-    #elif defined(__NetBSD__)
-        const char *netbsd_colors[] = {MAGENTA, WHITE};
-        set_colors(2, netbsd_colors);
-    #elif defined(__DragonFly__)
-        const char *dragonfly_colors[] = {RED, WHITE};
-        set_colors(2, dragonfly_colors);
-    #endif
+	#if defined(__FreeBSD__)
+		const char *freebsd_colors[] = {WHITE, RED, GREEN};
+		set_colors(3, freebsd_colors);
+	#elif defined(__OpenBSD__)
+		const char *openbsd_colors[] = {YELLOW, WHITE, CYAN, RED};
+		set_colors(4, openbsd_colors);
+	#elif defined(__NetBSD__)
+		const char *netbsd_colors[] = {MAGENTA, WHITE};
+		set_colors(2, netbsd_colors);
+	#elif defined(__DragonFly__)
+		const char *dragonfly_colors[] = {RED, WHITE};
+		set_colors(2, dragonfly_colors);
+	#endif
 }
 
 void print_logo(const char *system) {
@@ -193,7 +185,7 @@ void print_logo(const char *system) {
 			for (int j = 0; logos[i].lines[j] != NULL; j++) {
 				if (color_flag) {
 					char line[256];
-					snprintf(line, sizeof(line), logos[i].lines[j]);
+					snprintf(line, sizeof(line), "%s", logos[i].lines[j]);
 
 					for (int k = 0; k < 10; k++) {
 						char placeholder[4];
@@ -202,7 +194,7 @@ void print_logo(const char *system) {
 						if (pos != NULL) {
 							*pos = '\0';
 							printf("%s%s%s", dynamic_colors[k], line, CEND);
-							snprintf(line, sizeof(line), pos + strlen(placeholder));
+							snprintf(line, sizeof(line), "%s", pos + strlen(placeholder));
 							k = -1;
 						}
 					}
