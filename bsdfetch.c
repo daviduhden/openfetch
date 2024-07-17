@@ -33,18 +33,9 @@
 #include <time.h>
 #include <unistd.h>
 
-#define VERSION "1.1.1"
-#define RED "\033[1;31m"   /* Bright red */
-#define GREEN "\033[1;32m" /* Bright green */
-#define BLUE "\033[1;34m"  /* Bright blue */
-#define ORANGE "\033[38;5;208m" /* Bright orange */
-#define YELLOW "\033[1;33m" /* Bright yellow */
-#define WHITE "\033[1;37m" /* Bright white */
-#define CYAN "\033[1;36m" /* Bright cyan */
-#define CEND "\033[0m"    /* Reset color */
+#define VERSION "1.0"
 
 static char buf[BUFSIZ]; /* buffer large enough for everything */
-static int color_flag = 1;   /* 1 => color; 0 => no color in labels */
 
 typedef struct {
 	const char *name;
@@ -53,70 +44,40 @@ typedef struct {
 
 Logo logos[] = {
 	{
-        "FreeBSD",
-        {
-            RED "               ,        ,",
-            RED "              /(        )`",
-            RED "              \\ \\___   / |",
-            RED "              /- _  `-/  '",
-            RED "             (\\/\\/ \\   /\\",
-            WHITE "           / /   | `    \\",
-            CYAN "           O O   ) /    |",
-            WHITE "          `-^--'`<     '",
-            RED "            (_.)  _  )   /",
-            RED "             `.___/`    /",
-            RED "               `-----' /",
-            ORANGE "<----.     __ / __   \\",
-            ORANGE "<----|====" RED "O)))" ORANGE "==\\) /" ORANGE "====|",
-            ORANGE "<----'    " RED "`--' `.__,' \\",
-            RED "               |        |",
-            RED "                \\       /       /\\",
-            CYAN "            ______" RED "( (_  / \\______/",
-            CYAN "          ,'  ,-----'   |",
-            CYAN "          `--{__________)",
-            NULL
-        }
-    },
-	{
-		"OpenBSD",
+		"FreeBSD",
 		{
-			CYAN "                                     _",
-			"                                    (_)",
-			YELLOW "              |    .",
-			YELLOW "          .   |L  /|   .         " CYAN " _",
-			YELLOW "      _ . |\\ _| \\--+._/| .       " CYAN "(_)",
-			YELLOW "     / ||\\| Y J  )   / |/| ./",
-			"    J  |)'( |         F.'/       " CYAN " _",
-			YELLOW "  -<|  F         __     .-<        " CYAN "(_)",
-			YELLOW "    | /       .-' " CYAN ". " YELLOW ".  / " CYAN "-. " YELLOW "L___",
-			"    J \\      <    " CYAN "\\ " YELLOW " | | " WHITE "O" CYAN "\\ " YELLOW "|.-' " CYAN " _",
-			YELLOW "  _J \\  .-    \\ " CYAN "/ " WHITE "O " CYAN "| " YELLOW "| \\  | " YELLOW "F    " CYAN "(_)",
-			YELLOW " '-F  -<_.     \\   .-'  -' L__",
-			"__J  _   _.     >-'  " YELLOW ") " RED "._.   " YELLOW "|-'",
-			YELLOW " -|.'   /_.          " RED "\\_|  " YELLOW " F",
-			"  /.-   .                _.<",
-			" /'    /.'             .'  \\",
-			"  /L  /'   |/      _.-'-\\",
-			" /'J       ___.---'\\|",
-			"   |\\  .--' V  | . ",
-			"   |/. -.     ._)",
-			"      / .-.\\",
-			"      \\ (  \\",
-			"       .\\",
-			NULL
+			"               ,        ,",
+			"              /(        )`",
+			"              \\ \\___   / |",
+			"              /- _  `-/  '",
+			"             /\\/ \\   /\\",
+			"            / /   | `    \\",
+			"           O O   ) /    |",
+			"           `-^--'`<     '",
+			"          (_.)  _  )   /",
+			"           `.___/`    /",
+			"             `-----' /",
+			"<----.     __ / __   \\",
+			"<----|====O)))==) \\) /====|",
+			"<----'    `--' `.__,' \\",
+			"             |        |",
+			"              \\       /       /\\",
+			"         ______( (_  / \\______/",
+			"       ,'  ,-----'   |",
+			"       `--{__________)"
 		}
 	},
 	{
 		"NetBSD",
 		{
-			ORANGE "                     -/oshdmNMNdhyo+:-",
-			WHITE "y" ORANGE "/s+:-`    .-:+oydNMMMMNhs/-`",
-			WHITE "-m+" ORANGE "NMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-",
-			" " WHITE "-m+" ORANGE "NMMMMMMMMMMMMMMMMMMMMmy+:",
-			"  " WHITE "-N/" ORANGE "dMMMMMMMMMMMMMMMds:",
-			"   " WHITE "-N/" ORANGE "hMMMMMMMMMmho:",
-			"    " WHITE "-N/" ORANGE "-:/++/:.",
-			WHITE "     :M+",
+			"                     `-/oshdmNMNdhyo+:-`",
+			"y/s+:-``    `.-:+oydNMMMMNhs/-``",
+			"-m+NMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-`",
+			"-m+NMMMMMMMMMMMMMMMMMMMMmy+:`",
+			"-N/dMMMMMMMMMMMMMMMds:`",
+			"-N/hMMMMMMMMMmho:`",
+			"-N-:/++/:.`",
+			"     :M+",
 			"      :Mo",
 			"       :Ms",
 			"        :Ms",
@@ -125,29 +86,55 @@ Logo logos[] = {
 			"           :Ms",
 			"            :Ms",
 			"             :Ms",
-			"              :Ms",
-			NULL
+			"              :Ms"
+		}
+	},
+	{
+		"OpenBSD",
+		{
+			"                                     _",
+			"                                    (_)",
+			"              |    .",
+			"          .   |L  /|   .         _",
+			"      _ . |\\ _| \\--+._/| .       (_)",
+			"     / ||\\| Y J  )   / |/| ./",
+			"    J  |)'( |        ` F`.'/       _",
+			"  -<|  F         __     .-<        (_)",
+			"    | /       .-' . `.  /-. L___",
+			"    J \\      <    \\  | | O O\\|.-' _",
+			"  _J \\  .-    \\/ O | | \\  |F    (_)",
+			" '-F  -<_.     \\   .-'  `-' L__",
+			"__J  _   _.     >-'  )_.   |-'",
+			" `-|.'   /_.          \\_|  F",
+			"  /.-   .                _.<",
+			" /'    /.'             .'  `\\",
+			"  /L  /'   |/      _.-'-\\",
+			" /'J       ___.---'\\|",
+			"   |\\  .--' V  | `. `",
+			"   |/`. `-.     `._)",
+			"      / .-.\\",
+			"      \\ (  `\\",
+			"       `.\\"
 		}
 	},
 	{
 		"DragonFly",
 		{
-			WHITE ",--,           " RED "|           " WHITE ",--,",
-			WHITE "|   -,       " RED ",^,       " WHITE ",-'   |",
-			WHITE " ,    -,   " GREEN "(/ \\)   " WHITE ",-'    ,'",
-			WHITE "   -,    -, " RED "/   \\ " WHITE ",-'    ,-'",
-			WHITE "      ------" RED "(   )" WHITE "------'",
-			WHITE "  ,----------" RED "(   )" WHITE "----------,",
-			WHITE " |        _,-" RED "(   )" WHITE "-,_        |",
-			WHITE "  -,__,-'   " RED "\\   /" WHITE "   -,__,-'",
-			RED "              | |",
+			",--,           |           ,--,",
+			"|   `-,       ,^,       ,-'   |",
+			" `,    `-,   (/ \\)   ,-'    ,'",
+			"   `-,    `-,/   \\,-'    ,-",
+			"      `------(   )------",
+			"  ,----------(   )----------,",
+			" |        _,-(   )-,_        |",
+			"  `-,__,-'   \\   /   `-,__,-'",
 			"              | |",
 			"              | |",
 			"              | |",
 			"              | |",
 			"              | |",
-			"              |'",
-			NULL
+			"              | |",
+			"              `|'"
 		}
 	}
 };
@@ -156,11 +143,7 @@ void print_logo(const char *system) {
 	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
 		if (strcmp(system, logos[i].name) == 0) {
 			for (int j = 0; logos[i].lines[j] != NULL; j++) {
-				if (color_flag) {
-					printf("%s%s\n", logos[i].lines[j], CEND);
-				} else {
-					printf("%s\n", logos[i].lines[j]);
-				}
+				printf("%s\n", logos[i].lines[j]);
 			}
 			return;
 		}
@@ -182,13 +165,9 @@ void detect_and_print_logo(void) {
 #endif
 }
 
-static void cpr(char *fld, char *clr, char *fmt, ...) {
+static void cpr(char *fld, char *fmt, ...) {
 	va_list ap;
-
-	if (color_flag)
-		printf("%s%s%s: ", clr, fld, CEND);
-	else
-		printf("%s: ", fld);
+	printf("%s: ", fld);
 	va_start(ap, fmt);
 	vprintf(fmt, ap);
 	va_end(ap);
@@ -219,7 +198,7 @@ static void get_shell(void) {
 	}
 	if ((p = strrchr(sh, '/')) != NULL && *(p + 1) != '\0')
 		sh = ++p;
-	cpr("Shell", RED, sh);
+	cpr("Shell", sh);
 }
 
 static void get_user(void) {
@@ -231,7 +210,7 @@ static void get_user(void) {
 			err(1, "getpwuid() failed");
 		p = pw->pw_name;
 	}
-	cpr("User", RED, p);
+	cpr("User", p);
 }
 
 static void get_cpu(void) {
@@ -250,8 +229,8 @@ static void get_cpu(void) {
 
 	buf[sz] = '\0';
 	sqz(buf); /* NetBSD needs this */
-	cpr("CPU", RED, buf);
-	cpr("Cores", RED, "%ld of %ld processors online", ncpu, nmax);
+	cpr("CPU", buf);
+	cpr("Cores", "%ld of %ld processors online", ncpu, nmax);
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
 #define CELSIUS 273.15
@@ -262,12 +241,9 @@ static void get_cpu(void) {
 		snprintf(buf, sizeof buf, "dev.cpu.%d.temperature", i);
 		if (sysctlbyname(buf, &temp, &sz, NULL, 0) == -1)
 			return;
-		if (color_flag)
-			printf(GREEN " -> " CEND);
-		else
-			printf(" -> ");
+		printf(" -> ");
 		snprintf(buf, sizeof buf, "Core [%d]", i + 1);
-		cpr(buf, RED, "%.1f °C", (temp * 0.1) - CELSIUS);
+		cpr(buf, "%.1f °C", (temp * 0.1) - CELSIUS);
 	}
 
 #elif defined(__OpenBSD__)
@@ -283,7 +259,7 @@ static void get_cpu(void) {
 	sz = sizeof sensors;
 	if (sysctl(mib, 5, &sensors, &sz, NULL, 0) == -1)
 		return;
-	cpr("CPU Temp", RED, "%d °C", (int)((float)(sensors.value - 273150000) / 1E6));
+	cpr("CPU Temp", "%d °C", (int)((float)(sensors.value - 273150000) / 1E6));
 
 #elif defined(__NetBSD__)
 	const char *const cmd = "/usr/sbin/envstat |"
@@ -298,12 +274,9 @@ static void get_cpu(void) {
 
 		if (sscanf(buf, "%f", &temp) != 1)
 			break;
-		if (color_flag)
-			printf(GREEN " -> " CEND);
-		else
-			printf(" -> ");
+		printf(" -> ");
 		snprintf(buf, sizeof buf, "Core [%d]", ++i);
-		cpr(buf, RED, "%.1f °C", temp);
+		cpr(buf, "%.1f °C", temp);
 	}
 
 	if (pclose(f) != 0)
@@ -316,7 +289,7 @@ static void get_loadavg(void) {
 
 	if (getloadavg(lavg, 3) != 3)
 		err(1, "getloadavg() failed");
-	cpr("Loadavg", RED, "%.2lf %.2lf %.2lf", lavg[0], lavg[1], lavg[2]);
+	cpr("Loadavg", "%.2lf %.2lf %.2lf", lavg[0], lavg[1], lavg[2]);
 }
 
 static void get_packages(void) {
@@ -344,7 +317,7 @@ static void get_packages(void) {
 	if (pclose(f) != 0)
 		err(1, "pclose(%s) failed", cmd);
 
-	cpr("Packages", RED, "%zu", npkg);
+	cpr("Packages", "%zu", npkg);
 }
 
 static void get_uptime(void) {
@@ -362,7 +335,7 @@ static void get_uptime(void) {
 	up %= 3600;
 	mins = up / 60;
 
-	cpr("Uptime", RED, "%ldd %ldh %ldm", days, hours, mins);
+	cpr("Uptime", "%ldd %ldh %ldm", days, hours, mins);
 }
 
 static void get_memory(void) {
@@ -375,13 +348,13 @@ static void get_memory(void) {
 		err(1, "error getting no. of system pages");
 
 	ramsz = (unsigned long long)(pagesz * npages) / (1024 * 1024);
-	cpr("RAM", RED, "%llu MB", ramsz);
+	cpr("RAM", "%llu MB", ramsz);
 }
 
 static void get_hostname(void) {
 	if (gethostname(buf, sizeof buf) == -1)
 		err(1, "gethostname() failed");
-	cpr("Host", RED, "%s", buf);
+	cpr("Host", "%s", buf);
 }
 
 static void get_sysinfo(void) {
@@ -390,12 +363,12 @@ static void get_sysinfo(void) {
 
 	if (uname(&un))
 		err(1, "uname() failed");
-	cpr("OS", RED, un.sysname);
-	cpr("Release", RED, un.release);
+	cpr("OS", un.sysname);
+	cpr("Release", un.release);
 	if ((p = strchr(un.version, ':')) != NULL)
 		*p = '\0'; /* NetBSD: lop-off build-strings */
-	cpr("Version", RED, un.version);
-	cpr("Arch", RED, "%s", un.machine);
+	cpr("Version", un.version);
+	cpr("Arch", "%s", un.machine);
 }
 
 _Noreturn static void version(void) {
@@ -407,21 +380,17 @@ _Noreturn static void version(void) {
 }
 
 _Noreturn static void usage(void) {
-	printf("USAGE: %s [-h|-n|-v]\n"
+	printf("USAGE: %s [-h|-v]\n"
 		   "   -h  Show this help text\n"
-		   "   -n  Turn off colors\n"
 		   "   -v  Show version\n",
 		   getprogname());
 	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv) {
-	color_flag = isatty(1);
 	if (argc == 2) {
 		if (strcmp(argv[1], "-h") == 0)
 			usage();
-		else if (strcmp(argv[1], "-n") == 0)
-			color_flag = 0;
 		else if (strcmp(argv[1], "-v") == 0)
 			version();
 	}
