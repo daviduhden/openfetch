@@ -44,129 +44,172 @@
 #define CEND "\033[0m"    /* Reset color */
 
 static char buf[BUFSIZ]; /* buffer large enough for everything */
-static int color_flag;   /* 1 => color; 0 => no color in labels */
+static int color_flag = 1;   /* 1 => color; 0 => no color in labels */
+const char *dynamic_colors[10];
 
 // Logos with colors
 typedef struct {
 	const char *name;
 	const char *lines[30];
-	const char *colors[5];
+	const char *colors[10];
 } Logo;
 
-const Logo logos[] = {
+Logo logos[] = {
 	{
 		"FreeBSD",
 		{
-			"                        ` ",
-			" `.....---.......```   -/ ",
-			"+o   .--`         /y:`      +.",
-			"yo`:.            :o      `+- ",
-			" y/               -/`   -o/ ",
-			" .-                  ::/sy+:. ",
-			" /                     `--  / ",
-			"`:                          :` ",
-			"`:                          :` ",
-			" /                          / ",
-			" .-                        -. ",
-			"  --                      -. ",
-			"   `:`                  `:` ",
-			"     .--             `--. ",
-			"        .---.....----. ",
+			"   ${c2} ",
+			"${c1}`",
+			"  ${c2}` `.....---...${c1}....--.",
+			"   -/",
+			"  ${c2}+o   .--         ${c1}/y:      +.",
+			"  ${c2} yo:.            ${c1}:o      +-",
+			"    ${c2}y/               ${c1}-/   -o/",
+			"   ${c2}.-                  ${c1}::/sy+:.",
+			"   ${c2}/                     ${c1}--  /",
+			"  ${c2}:                          ${c1}:",
+			"  ${c2}:                          ${c1}:",
+			"   ${c2}/                          ${c1}/",
+			"   ${c2}.-                        ${c1}-.",
+			"    ${c2}--                      ${c1}-.",
+			"     ${c2}:                  ${c1}:",
+			"       .--             --.",
+			"          .---.....----.",
 			NULL
 		},
 		{
-			WHITE, RED
+			WHITE, RED, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED
 		}
 	},
 	{
 		"OpenBSD",
 		{
-			"                                     _ ",
-			"                                    (_) ",
-			"              |    . ",
-			"          .   |L  /|   .         _ ",
-			"      _ . |\\ _| \\--+._/| .       (_) ",
-			"     / ||\\| Y J  )   / |/| ./ ",
-			"    J  |)'( |        ` F`.'/       _ ",
-			"  -<|  F         __     .-<        (_) ",
-			"    | /       .-' . `.  / -. L___ ",
-			"    J \\      <    \\ | | O\\|.-' _ ",
-			"  _J \\  .-    \\ / O | | \\  | F    (_) ",
-			" '-F  -<_.     \\   .-'  `-' L__ ",
-			"__J  _   _.     >-'  ) ._.   |- ' ",
-			" `-|.'   /_.          \\_|  F ",
-			"  /.-   .                _.< ",
-			" /'    /.'             .'  `\\ ",
-			"  /L  /'   |/      _.-'-\\ ",
-			" /'J       ___.---'\\| ",
-			"   |\\  .--' V  | `. ` ",
-			"   |/`. `-.     `._) ",
-			"      / .-.\\ ",
-			"      \\ (  `\\ ",
-			"       `.\\ ",
+			"${c3}                                     _",
+			"                                    (_)",
+			"${c1}              |    .",
+			"${c1}          .   |L  /|   .         ${c3} _",
+			"${c1}      _ . |\\ _| \\--+._/| .       ${c3}(_)",
+			"${c1}     / ||\\| Y J  )   / |/| ./",
+			"    J  |)'( |         F.'/       ${c3} _",
+			"${c1}  -<|  F         __     .-<        ${c3}(_)",
+			"${c1}    | /       .-'${c3}. ${c1}.  /${c3}-. ${c1}L___",
+			"    J \\      <    ${c3}\\ ${c1} | | ${c5}O${c3}\\${c1}|.-' ${c3} _",
+			"${c1}  _J \\  .-    \\${c3}/ ${c5}O ${c3}| ${c1}| \\  |${c1}F    ${c3}(_)",
+			"${c1} '-F  -<_.     \\   .-'  -' L__",
+			"__J  _   _.     >-'  ${c1})${c4}._.   ${c1}|-'",
+			"${c1} -|.'   /_.          ${c4}\\_|  ${c1} F",
+			"  /.-   .                _.<",
+			" /'    /.'             .'  \\",
+			"  /L  /'   |/      _.-'-\\",
+			" /'J       ___.---'\\|",
+			"   |\\  .--' V  | . ",
+			"   |/. -.     ._)",
+			"      / .-.\\",
+			"      \\ (  \\",
+			"       .\\",
 			NULL
 		},
 		{
-			YELLOW, WHITE, CYAN, RED
-		}
-	},
-	{
-		"DragonFly",
-		{
-			",--,           |           ,--,",
-			"|   `-,       ,^,       ,-'   |",
-			" `,    `-,   (/ \\)   ,-'    ,'",
-			"   `-,    `-,/   \\,-'    ,-'",
-			"      `------(   )------'",
-			"  ,----------(   )----------,",
-			" |        _,-(   )-,_        |",
-			"  `-,__,-'   \\   /   `-,__,-'",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              `|'",
-			NULL
-		},
-		{
-			RED, WHITE
+			YELLOW, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED, WHITE, CYAN, RED
 		}
 	},
 	{
 		"NetBSD",
 		{
-			"                     `-/oshdmNMNdhyo+:-` ",
-			"y/s+:-``    `.-:+oydNMMMMNhs/-`` ",
-			"-mNMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-` ",
-			"-mNMMMMMMMMMMMMMMMMMMMMmy+:` ",
-			"-N/dMMMMMMMMMMMMMMMds:` ",
-			"-NhMMMMMMMMMmho:` ",
-			"-N-:/++/:.` ",
-			"     :M+ ",
-			"      :Mo ",
-			"       :Ms ",
-			"        :Ms ",
-			"         :Ms ",
-			"          :Ms ",
-			"           :Ms ",
-			"            :Ms ",
-			"             :Ms ",
-			"              :Ms ",
+			"${c1}                     -/oshdmNMNdhyo+:-",
+			"${c2}y${c1}/s+:-`    .-:+oydNMMMMNhs/-`",
+			"${c2}-m+${c1}NMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-",
+			" ${c2}-m+${c1}NMMMMMMMMMMMMMMMMMMMMmy+:",
+			"  ${c2}-N/${c1}dMMMMMMMMMMMMMMMds:",
+			"   ${c2}-N/${c1}hMMMMMMMMMmho:",
+			"    ${c2}-N/${c1}-:/++/:.",
+			"${c2}     :M+",
+			"      :Mo",
+			"       :Ms",
+			"        :Ms",
+			"         :Ms",
+			"          :Ms",
+			"           :Ms",
+			"            :Ms",
+			"             :Ms",
+			"              :Ms",
 			NULL
 		},
 		{
-			MAGENTA, WHITE
+			MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE, MAGENTA, WHITE
+		}
+	},
+	{
+		"DragonFly",
+		{
+			"${c2},--,           ${c1}|           ${c2},--,",
+			"${c2}|   -,       ${c1},^,       ${c2},-'   |",
+			"${c2} ,    -,   ${c3}(/ \\)   ${c2},-'    ,'",
+			"${c2}   -,    -,${c1}/   \\${c2},-'    ,-'",
+			"${c2}      ------${c1}(   )${c2}------'",
+			"${c2}  ,----------${c1}(   )${c2}----------,",
+			"${c2} |        _,-${c1}(   )${c2}-,_        |",
+			"${c2}  -,__,-'   ${c1}\\   /${c2}   -,__,-'",
+			"${c1}              | |",
+			"              | |",
+			"              | |",
+			"              | |",
+			"              | |",
+			"              | |",
+			"              |'",
+			NULL
+		},
+		{
+			RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED, WHITE, RED
 		}
 	},
 };
+
+void set_colors(int num_colors, const char *colors[]) {
+	for (int i = 0; i < num_colors; i++) {
+		dynamic_colors[i] = colors[i];
+	}
+}
+
+void detect_and_set_colors(void) {
+    #if defined(__FreeBSD__)
+        const char *freebsd_colors[] = {WHITE, RED, GREEN};
+        set_colors(3, freebsd_colors);
+    #elif defined(__OpenBSD__)
+        const char *openbsd_colors[] = {YELLOW, WHITE, CYAN, RED};
+        set_colors(4, openbsd_colors);
+    #elif defined(__NetBSD__)
+        const char *netbsd_colors[] = {MAGENTA, WHITE};
+        set_colors(2, netbsd_colors);
+    #elif defined(__DragonFly__)
+        const char *dragonfly_colors[] = {RED, WHITE};
+        set_colors(2, dragonfly_colors);
+    #endif
+}
 
 void print_logo(const char *system) {
 	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
 		if (strcmp(system, logos[i].name) == 0) {
 			for (int j = 0; logos[i].lines[j] != NULL; j++) {
-				printf("%s%s%s\n", logos[i].colors[j % 5], logos[i].lines[j], CEND);
+				if (color_flag) {
+					char line[256];
+					snprintf(line, sizeof(line), logos[i].lines[j]);
+
+					for (int k = 0; k < 10; k++) {
+						char placeholder[4];
+						snprintf(placeholder, sizeof(placeholder), "${c%d}", k + 1);
+						char *pos = strstr(line, placeholder);
+						if (pos != NULL) {
+							*pos = '\0';
+							printf("%s%s%s", dynamic_colors[k], line, CEND);
+							snprintf(line, sizeof(line), pos + strlen(placeholder));
+							k = -1;
+						}
+					}
+					printf("%s\n", line);
+				} else {
+					printf("%s\n", logos[i].lines[j]);
+				}
 			}
 			return;
 		}
