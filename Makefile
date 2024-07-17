@@ -26,3 +26,8 @@ all: ${EXE} ${DBG}
 .PHONY: clean
 clean:
 	rm -f ${EXE} ${DBG}
+
+.PHONY: install
+install:
+	install -d /usr/local/bin
+	install -m 755 ${EXE} /usr/local/bin
