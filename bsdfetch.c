@@ -171,7 +171,7 @@ void print_logo(const char *system) {
 			return;
 		}
 	}
-	fprintf(stderr, "Unsupported BSD system: %s\n", system);
+	fprintf(stderr, "Unsupported BSD variant: %s\n", system);
 }
 
 void detect_and_print_logo(void) {
