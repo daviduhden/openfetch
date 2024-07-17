@@ -13,6 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/utsname.h>
@@ -31,18 +32,174 @@
 #include <time.h>
 #include <unistd.h>
 
-#define VERSION	"1.1.1"
-#define RED	"\033[1;31m"	/* Bright red */
-#define GREEN "\033[1;32m"	/* Bright green */
-#define CEND "\033[0m"		/* Reset color */
+#define VERSION "1.1.1"
+#define RED "\033[1;31m"   /* Bright red */
+#define GREEN "\033[1;32m" /* Bright green */
+#define BLUE "\033[1;34m"  /* Bright blue */
+#define MAGENTA "\033[1;35m" /* Bright magenta */
+#define YELLOW "\033[1;33m" /* Bright yellow */
+#define WHITE "\033[1;37m" /* Bright white */
+#define CYAN "\033[1;36m" /* Bright cyan */
+#define CEND "\033[0m"    /* Reset color */
 
-static char buf[BUFSIZ];	/* buffer large enough for everything */
-static int color_flag;		/* 1 => color; 0 => no color in labels */
+static char buf[BUFSIZ]; /* buffer large enough for everything */
+static int color_flag;   /* 1 => color; 0 => no color in labels */
 
-/**
- * Print field `fld' in colour `clr' followed by formatted string.
- */
-static void cpr(char* fld, char* clr, char* fmt, ...) {
+// Logos with colors
+typedef struct {
+	const char *name;
+	const char *lines[20];
+	const char *colors[5];
+} Logo;
+
+const Logo logos[] = {
+	{
+		"FreeBSD",
+		{
+			"                        ` ",
+			" `.....---.......```   -/ ",
+			"+o   .--`         /y:`      +.",
+			"yo`:.            :o      `+- ",
+			" y/               -/`   -o/ ",
+			" .-                  ::/sy+:. ",
+			" /                     `--  / ",
+			"`:                          :` ",
+			"`:                          :` ",
+			" /                          / ",
+			" .-                        -. ",
+			"  --                      -. ",
+			"   `:`                  `:` ",
+			"     .--             `--. ",
+			"        .---.....----. ",
+			NULL
+		},
+		{
+			WHITE, RED
+		}
+	},
+	{
+		"OpenBSD",
+		{
+			"                                     _ ",
+			"                                    (_) ",
+			"              |    . ",
+			"          .   |L  /|   .         _ ",
+			"      _ . |\\ _| \\--+._/| .       (_) ",
+			"     / ||\\| Y J  )   / |/| ./ ",
+			"    J  |)'( |        ` F`.'/       _ ",
+			"  -<|  F         __     .-<        (_) ",
+			"    | /       .-' . `.  / -. L___ ",
+			"    J \\      <    \\ | | O\\|.-' _ ",
+			"  _J \\  .-    \\ / O | | \\  | F    (_) ",
+			" '-F  -<_.     \\   .-'  `-' L__ ",
+			"__J  _   _.     >-'  ) ._.   |- ' ",
+			" `-|.'   /_.          \\_|  F ",
+			"  /.-   .                _.< ",
+			" /'    /.'             .'  `\\ ",
+			"  /L  /'   |/      _.-'-\\ ",
+			" /'J       ___.---'\\| ",
+			"   |\\  .--' V  | `. ` ",
+			"   |/`. `-.     `._) ",
+			"      / .-.\\ ",
+			"      \\ (  `\\ ",
+			"       `.\\ ",
+			NULL
+		},
+		{
+			YELLOW, WHITE, CYAN, RED
+		}
+	},
+	{
+		"DragonFly",
+		{
+			",--,           |           ,--,",
+			"|   `-,       ,^,       ,-'   |",
+			" `,    `-,   (/ \\)   ,-'    ,'",
+			"   `-,    `-,/   \\,-'    ,-'",
+			"      `------(   )------'",
+			"  ,----------(   )----------,",
+			" |        _,-(   )-,_        |",
+			"  `-,__,-'   \\   /   `-,__,-'",
+			"              | |",
+			"              | |",
+			"              | |",
+			"              | |",
+			"              | |",
+			"              | |",
+			"              `|'",
+			NULL
+		},
+		{
+			RED, WHITE
+		}
+	}
+	{
+		"NetBSD",
+		{
+			"                     `-/oshdmNMNdhyo+:-` ",
+			"y/s+:-``    `.-:+oydNMMMMNhs/-`` ",
+			"-mNMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-` ",
+			"-mNMMMMMMMMMMMMMMMMMMMMmy+:` ",
+			"-N/dMMMMMMMMMMMMMMMds:` ",
+			"-NhMMMMMMMMMmho:` ",
+			"-N-:/++/:.` ",
+			"     :M+ ",
+			"      :Mo ",
+			"       :Ms ",
+			"        :Ms ",
+			"         :Ms ",
+			"          :Ms ",
+			"           :Ms ",
+			"            :Ms ",
+			"             :Ms ",
+			"              :Ms ",
+			NULL
+		},
+		{
+			MAGENTA, WHITE
+		}
+	},
+};
+
+void print_logo(const char *system) {
+	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
+		if (strcmp(system, logos[i].name) == 0) {
+			for (int j = 0; logos[i].lines[j] != NULL; j++) {
+				printf("%s%s%s\n", logos[i].colors[j % 5], logos[i].lines[j], CEND);
+			}
+			return;
+		}
+	}
+	fprintf(stderr, "Unsupported BSD system: %s\n", system);
+}
+
+void print_logo(const char *system) {
+	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
+		if (strcmp(system, logos[i].name) == 0) {
+			for (int j = 0; logos[i].lines[j] != NULL; j++) {
+				printf("%s%s%s\n", logos[i].colors[j % 5], logos[i].lines[j], CEND);
+			}
+			return;
+		}
+	}
+	fprintf(stderr, "Unsupported system: %s\n", system);
+}
+
+void detect_and_print_logo() {
+#if defined(__FreeBSD__)
+	print_logo("FreeBSD");
+#elif defined(__OpenBSD__)
+	print_logo("OpenBSD");
+#elif defined(__NetBSD__)
+	print_logo("NetBSD");
+#elif defined(__DragonFly__)
+	print_logo("DragonFly");
+#else
+#error Unsupported BSD variant
+#endif
+}
+
+static void cpr(char *fld, char *clr, char *fmt, ...) {
 	va_list ap;
 
 	if (color_flag)
@@ -58,8 +215,8 @@ static void cpr(char* fld, char* clr, char* fmt, ...) {
 /**
  * Squeeze multiple adjacent blank chars. into a single space.
  */
-static void sqz(char* s) {
-	for (char* p = s; *p; p++) {
+static void sqz(char *s) {
+	for (char *p = s; *p; p++) {
 		size_t n;
 		if ((n = strspn(p, " \t")) > 0) {
 			*p = ' ';
@@ -69,22 +226,22 @@ static void sqz(char* s) {
 }
 
 static void get_shell(void) {
-	struct passwd* pw;
-	char* sh, *p;
+	struct passwd *pw;
+	char *sh, *p;
 
 	if ((sh = getenv("SHELL")) == NULL || *sh == '\0') {
 		if ((pw = getpwuid(getuid())) == NULL)
 			err(1, "getpwuid() failed");
 		sh = pw->pw_shell;
 	}
-	if ((p = strrchr(sh, '/')) != NULL && *(p+1) != '\0')
+	if ((p = strrchr(sh, '/')) != NULL && *(p + 1) != '\0')
 		sh = ++p;
 	cpr("Shell", RED, sh);
 }
 
 static void get_user(void) {
-	struct passwd* pw;
-	char* p;
+	struct passwd *pw;
+	char *p;
 
 	if ((p = getenv("USER")) == NULL || *p == '\0') {
 		if ((pw = getpwuid(getuid())) == NULL)
@@ -109,12 +266,12 @@ static void get_cpu(void) {
 			err(1, "error getting CPU info.");
 
 	buf[sz] = '\0';
-	sqz(buf);	/* NetBSD needs this */
+	sqz(buf); /* NetBSD needs this */
 	cpr("CPU", RED, buf);
 	cpr("Cores", RED, "%d of %d processors online", ncpu, nmax);
 
-#if defined(__FreeBSD__) || defined(__MidnightBSD__) || defined(__DragonFly__)
-#define CELSIUS	273.15
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+#define CELSIUS 273.15
 	for (int i = 0; i < (int)ncpu; i++) {
 		int temp = 0;
 
@@ -146,9 +303,9 @@ static void get_cpu(void) {
 	cpr("CPU Temp", RED, "%d °C", (int)((float)(sensors.value - 273150000) / 1E6));
 
 #elif defined(__NetBSD__)
-	const char* const cmd = "/usr/sbin/envstat |"
-				" awk '/ cpu[0-9]+ temperature: / { print $3 }'";
-	FILE* f = popen(cmd, "r");
+	const char *const cmd = "/usr/sbin/envstat |"
+							" awk '/ cpu[0-9]+ temperature: / { print $3 }'";
+	FILE *f = popen(cmd, "r");
 	if (f == NULL)
 		err(1, "popen(%s) failed", cmd);
 	int i = 0;
@@ -172,7 +329,7 @@ static void get_cpu(void) {
 }
 
 static void get_loadavg(void) {
-	double lavg[3] = { 0.0 };
+	double lavg[3] = {0.0};
 
 	if (getloadavg(lavg, 3) != 3)
 		err(1, "getloadavg() failed");
@@ -181,17 +338,14 @@ static void get_loadavg(void) {
 
 static void get_packages(void) {
 
-#if defined (__OpenBSD__) || defined (__NetBSD__)
-	const char* const cmd = "/usr/sbin/pkg_info";
+#if defined(__OpenBSD__) || defined(__NetBSD__)
+	const char *const cmd = "/usr/sbin/pkg_info";
 
-#elif defined (__DragonFly__) || defined (__FreeBSD__)
-	const char* const cmd = "/usr/sbin/pkg info";
-
-#elif defined (__MidnightBSD__)
-	const char* const cmd = "/usr/sbin/mport list";
+#elif defined(__DragonFly__) || defined(__FreeBSD__)
+	const char *const cmd = "/usr/sbin/pkg info";
 
 #else
-#error	Unsupported BSD variant
+#error Unsupported BSD variant
 #endif
 
 	FILE *f = popen(cmd, "r");
@@ -237,7 +391,7 @@ static void get_memory(void) {
 	if ((npages = sysconf(_SC_PHYS_PAGES)) == -1)
 		err(1, "error getting no. of system pages");
 
-	ramsz = (unsigned long long)(pagesz * npages) / (1024*1024);
+	ramsz = (unsigned long long)(pagesz * npages) / (1024 * 1024);
 	cpr("RAM", RED, "%llu MB", ramsz);
 }
 
@@ -249,46 +403,46 @@ static void get_hostname(void) {
 
 static void get_sysinfo(void) {
 	struct utsname un;
-	char* p;
+	char *p;
 
 	if (uname(&un))
 		err(1, "uname() failed");
 	cpr("OS", RED, un.sysname);
 	cpr("Release", RED, un.release);
 	if ((p = strchr(un.version, ':')) != NULL)
-		*p = '\0';	/* NetBSD: lop-off build-strings */
+		*p = '\0'; /* NetBSD: lop-off build-strings */
 	cpr("Version", RED, un.version);
 	cpr("Arch", RED, "%s", un.machine);
 }
 
 _Noreturn static void version(void) {
 	printf("%s - version %s (%s)\n",
-	getprogname(),
-	VERSION,
-	__DATE__
-	);
+		   getprogname(),
+		   VERSION,
+		   __DATE__);
 	exit(EXIT_SUCCESS);
 }
 
 _Noreturn static void usage(void) {
-	printf( "USAGE: %s [-h|-n|-v]\n"
-		"   -h  Show this help text\n"
-		"   -n  Turn off colors\n"
-		"   -v  Show version\n",
-		getprogname());
+	printf("USAGE: %s [-h|-n|-v]\n"
+		   "   -h  Show this help text\n"
+		   "   -n  Turn off colors\n"
+		   "   -v  Show version\n",
+		   getprogname());
 	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv) {
 	color_flag = isatty(1);
 	if (argc == 2) {
-		if      (strcmp(argv[1], "-h") == 0)
+		if (strcmp(argv[1], "-h") == 0)
 			usage();
 		else if (strcmp(argv[1], "-n") == 0)
 			color_flag = 0;
 		else if (strcmp(argv[1], "-v") == 0)
 			version();
 	}
+	detect_and_print_logo();
 	get_sysinfo();
 	get_hostname();
 	get_shell();
