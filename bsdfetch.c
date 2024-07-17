@@ -179,27 +179,35 @@ void detect_and_set_colors(void) {
 	#endif
 }
 
+void replace_placeholder_with_color(char *dest, const char *src, size_t size) {
+	char *pos;
+	int len;
+
+	strncpy(dest, src, size);
+	dest[size - 1] = '\0';
+
+	for (int k = 0; k < 10; k++) {
+		if (dynamic_colors[k] == NULL) continue;
+		char placeholder[5];
+		snprintf(placeholder, sizeof(placeholder), "${c%d}", k + 1);
+
+		while ((pos = strstr(dest, placeholder)) != NULL) {
+			len = pos - dest;
+			dest[len] = '\0';
+			strncat(dest, dynamic_colors[k], size - len - 1);
+			strncat(dest, pos + strlen(placeholder), size - strlen(dest) - 1);
+		}
+	}
+}
+
 void print_logo(const char *system) {
 	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
 		if (strcmp(system, logos[i].name) == 0) {
 			for (int j = 0; logos[i].lines[j] != NULL; j++) {
 				if (color_flag) {
 					char line[256];
-					snprintf(line, sizeof(line), "%s", logos[i].lines[j]);
-
-					for (int k = 0; k < 10; k++) {
-						if (dynamic_colors[k] == NULL) continue;
-						char placeholder[5];
-						snprintf(placeholder, sizeof(placeholder), "${c%d}", k + 1);
-						char *pos = strstr(line, placeholder);
-						while (pos != NULL) {
-							*pos = '\0';
-							printf("%s%s%s", dynamic_colors[k], line, CEND);
-							snprintf(line, sizeof(line), "%s", pos + strlen(placeholder));
-							pos = strstr(line, placeholder);
-						}
-					}
-					printf("%s\n", line);
+					replace_placeholder_with_color(line, logos[i].lines[j], sizeof(line));
+					printf("%s%s\n", line, CEND);
 				} else {
 					printf("%s\n", logos[i].lines[j]);
 				}
