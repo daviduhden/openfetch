@@ -77,7 +77,7 @@ Logo logos[] = {
 			"          .---.....----.",
 			NULL
 		},
-		{WHITE, RED, GREEN}
+		{WHITE, RED, GREEN, "", ""}
 	},
 	{
 		"OpenBSD",
@@ -107,7 +107,7 @@ Logo logos[] = {
 			"       .\\",
 			NULL
 		},
-		{YELLOW, WHITE, CYAN, RED}
+		{YELLOW, WHITE, CYAN, RED, ""}
 	},
 	{
 		"NetBSD",
@@ -131,7 +131,7 @@ Logo logos[] = {
 			"              :Ms",
 			NULL
 		},
-		{MAGENTA, WHITE}
+		{MAGENTA, WHITE, "", "", ""}
 	},
 	{
 		"DragonFly",
@@ -153,7 +153,7 @@ Logo logos[] = {
 			"              |'",
 			NULL
 		},
-		{RED, WHITE}
+		{RED, WHITE, "", "", ""}
 	},
 };
 
@@ -188,14 +188,15 @@ void print_logo(const char *system) {
 					snprintf(line, sizeof(line), "%s", logos[i].lines[j]);
 
 					for (int k = 0; k < 10; k++) {
-						char placeholder[4];
+						if (dynamic_colors[k] == NULL) continue;
+						char placeholder[5];
 						snprintf(placeholder, sizeof(placeholder), "${c%d}", k + 1);
 						char *pos = strstr(line, placeholder);
-						if (pos != NULL) {
+						while (pos != NULL) {
 							*pos = '\0';
 							printf("%s%s%s", dynamic_colors[k], line, CEND);
 							snprintf(line, sizeof(line), "%s", pos + strlen(placeholder));
-							k = -1;
+							pos = strstr(line, placeholder);
 						}
 					}
 					printf("%s\n", line);
