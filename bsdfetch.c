@@ -133,7 +133,7 @@ const Logo logos[] = {
 		{
 			RED, WHITE
 		}
-	}
+	},
 	{
 		"NetBSD",
 		{
@@ -174,19 +174,7 @@ void print_logo(const char *system) {
 	fprintf(stderr, "Unsupported BSD system: %s\n", system);
 }
 
-void print_logo(const char *system) {
-	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
-		if (strcmp(system, logos[i].name) == 0) {
-			for (int j = 0; logos[i].lines[j] != NULL; j++) {
-				printf("%s%s%s\n", logos[i].colors[j % 5], logos[i].lines[j], CEND);
-			}
-			return;
-		}
-	}
-	fprintf(stderr, "Unsupported system: %s\n", system);
-}
-
-void detect_and_print_logo() {
+void detect_and_print_logo(void) {
 #if defined(__FreeBSD__)
 	print_logo("FreeBSD");
 #elif defined(__OpenBSD__)
@@ -269,7 +257,7 @@ static void get_cpu(void) {
 	buf[sz] = '\0';
 	sqz(buf); /* NetBSD needs this */
 	cpr("CPU", RED, buf);
-	cpr("Cores", RED, "%d of %d processors online", ncpu, nmax);
+	cpr("Cores", RED, "%ld of %ld processors online", ncpu, nmax);
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
 #define CELSIUS 273.15
@@ -380,7 +368,7 @@ static void get_uptime(void) {
 	up %= 3600;
 	mins = up / 60;
 
-	cpr("Uptime", RED, "%dd %dh %dm", days, hours, mins);
+	cpr("Uptime", RED, "%ldd %ldh %ldm", days, hours, mins);
 }
 
 static void get_memory(void) {
