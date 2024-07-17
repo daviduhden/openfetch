@@ -37,7 +37,7 @@
 #define RED "\033[1;31m"   /* Bright red */
 #define GREEN "\033[1;32m" /* Bright green */
 #define BLUE "\033[1;34m"  /* Bright blue */
-#define MAGENTA "\033[1;35m" /* Bright magenta */
+#define ORANGE "\033[38;5;208m" /* Bright orange */
 #define YELLOW "\033[1;33m" /* Bright yellow */
 #define WHITE "\033[1;37m" /* Bright white */
 #define CYAN "\033[1;36m" /* Bright cyan */
@@ -53,45 +53,47 @@ typedef struct {
 
 Logo logos[] = {
 	{
-		"FreeBSD",
-		{
-			"   \033[1;31m ",
-			"\033[1;31m`",
-			"  \033[1;31m` `.....---...\033[1;31m....--.",
-			"   -/",
-			"  \033[1;31m+o   .--         \033[1;31m/y:      +.",
-			"  \033[1;31m yo:.            \033[1;31m:o      +-",
-			"    \033[1;31my/               \033[1;31m-/   -o/",
-			"   \033[1;31m.-                  \033[1;31m::/sy+:.",
-			"   \033[1;31m/                     \033[1;31m--  /",
-			"  \033[1;31m:                          \033[1;31m:",
-			"  \033[1;31m:                          \033[1;31m:",
-			"   \033[1;31m/                          \033[1;31m/",
-			"   \033[1;31m.-                        \033[1;31m-.",
-			"    \033[1;31m--                      \033[1;31m-.",
-			"     \033[1;31m:                  \033[1;31m:",
-			"       .--             --.",
-			"          .---.....----.",
-			NULL
-		}
-	},
+        "FreeBSD",
+        {
+            RED "               ,        ,",
+            RED "              /(        )`",
+            RED "              \\ \\___   / |",
+            RED "              /- _  `-/  '",
+            RED "             (\\/\\/ \\   /\\",
+            WHITE "           / /   | `    \\",
+            CYAN "           O O   ) /    |",
+            WHITE "          `-^--'`<     '",
+            RED "            (_.)  _  )   /",
+            RED "             `.___/`    /",
+            RED "               `-----' /",
+            ORANGE "<----.     __ / __   \\",
+            ORANGE "<----|====" RED "O)))" ORANGE "==\\) /" ORANGE "====|",
+            ORANGE "<----'    " RED "`--' `.__,' \\",
+            RED "               |        |",
+            RED "                \\       /       /\\",
+            CYAN "            ______" RED "( (_  / \\______/",
+            CYAN "          ,'  ,-----'   |",
+            CYAN "          `--{__________)",
+            NULL
+        }
+    },
 	{
 		"OpenBSD",
 		{
-			"\033[1;37m                                     _",
+			CYAN "                                     _",
 			"                                    (_)",
-			"\033[1;33m              |    .",
-			"\033[1;33m          .   |L  /|   .         \033[1;37m _",
-			"\033[1;33m      _ . |\\ _| \\--+._/| .       \033[1;37m(_)",
-			"\033[1;33m     / ||\\| Y J  )   / |/| ./",
-			"    J  |)'( |         F.'/       \033[1;37m _",
-			"\033[1;33m  -<|  F         __     .-<        \033[1;37m(_)",
-			"\033[1;33m    | /       .-'\033[1;37m. \033[1;33m.  /\033[1;37m-. \033[1;37m___",
-			"    J \\      <    \033[1;37m\\ \033[1;33m | | \033[1;36mO\033[1;37m\\\033[1;33m|.-' \033[1;37m _",
-			"\033[1;33m  _J \\  .-    \033[1;37m/ \033[1;36mO \033[1;37m| \033[1;33m| \\  |\033[1;33mF    \033[1;37m(_)",
-			"\033[1;33m '-F  -<_.     \\   .-'  -' L__",
-			"__J  _   _.     >-'  \033[1;33m)\033[1;31m._.   \033[1;33m|-'",
-			"\033[1;33m -|.'   /_.          \033[1;31m\\_|  \033[1;33m F",
+			YELLOW "              |    .",
+			YELLOW "          .   |L  /|   .         " CYAN " _",
+			YELLOW "      _ . |\\ _| \\--+._/| .       " CYAN "(_)",
+			YELLOW "     / ||\\| Y J  )   / |/| ./",
+			"    J  |)'( |         F.'/       " CYAN " _",
+			YELLOW "  -<|  F         __     .-<        " CYAN "(_)",
+			YELLOW "    | /       .-' " CYAN ". " YELLOW ".  / " CYAN "-. " YELLOW "L___",
+			"    J \\      <    " CYAN "\\ " YELLOW " | | " WHITE "O" CYAN "\\ " YELLOW "|.-' " CYAN " _",
+			YELLOW "  _J \\  .-    \\ " CYAN "/ " WHITE "O " CYAN "| " YELLOW "| \\  | " YELLOW "F    " CYAN "(_)",
+			YELLOW " '-F  -<_.     \\   .-'  -' L__",
+			"__J  _   _.     >-'  " YELLOW ") " RED "._.   " YELLOW "|-'",
+			YELLOW " -|.'   /_.          " RED "\\_|  " YELLOW " F",
 			"  /.-   .                _.<",
 			" /'    /.'             .'  \\",
 			"  /L  /'   |/      _.-'-\\",
@@ -107,14 +109,14 @@ Logo logos[] = {
 	{
 		"NetBSD",
 		{
-			"\033[1;35m                     -/oshdmNMNdhyo+:-",
-			"\033[1;37my\033[1;35m/s+:-`    .-:+oydNMMMMNhs/-`",
-			"\033[1;37m-m+\033[1;35mNMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-",
-			" \033[1;37m-m+\033[1;35mNMMMMMMMMMMMMMMMMMMMMmy+:",
-			"  \033[1;37m-N/\033[1;35mdMMMMMMMMMMMMMMMds:",
-			"   \033[1;37m-N/\033[1;35mhMMMMMMMMMmho:",
-			"    \033[1;37m-N/\033[1;35m-:/++/:.",
-			"\033[1;35m     :M+",
+			ORANGE "                     -/oshdmNMNdhyo+:-",
+			WHITE "y" ORANGE "/s+:-`    .-:+oydNMMMMNhs/-`",
+			WHITE "-m+" ORANGE "NMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-",
+			" " WHITE "-m+" ORANGE "NMMMMMMMMMMMMMMMMMMMMmy+:",
+			"  " WHITE "-N/" ORANGE "dMMMMMMMMMMMMMMMds:",
+			"   " WHITE "-N/" ORANGE "hMMMMMMMMMmho:",
+			"    " WHITE "-N/" ORANGE "-:/++/:.",
+			WHITE "     :M+",
 			"      :Mo",
 			"       :Ms",
 			"        :Ms",
@@ -130,31 +132,35 @@ Logo logos[] = {
 	{
 		"DragonFly",
 		{
-			"\033[1;32m,--,           \033[1;37m|           \033[1;32m,--,",
-			"\033[1;32m|   -,       \033[1;37m,^,       \033[1;32m,-'   |",
-			"\033[1;32m ,    -,   \033[1;37m(/ \\)   \033[1;32m,-'    ,'",
-			"\033[1;32m   -,    -,\033[1;37m/   \\\033[1;32m,-'    ,-'",
-			"\033[1;32m      ------\033[1;37m(   )\033[1;32m------'",
-			"\033[1;32m  ,----------\033[1;37m(   )\033[1;32m----------,",
-			"\033[1;32m |        _,-\033[1;37m(   )\033[1;32m-,_        |",
-			"\033[1;32m  -,__,-'   \033[1;37m\\   /\033[1;32m   -,__,-'",
-			"\033[1;37m              | |",
+			WHITE ",--,           " RED "|           " WHITE ",--,",
+			WHITE "|   -,       " RED ",^,       " WHITE ",-'   |",
+			WHITE " ,    -,   " GREEN "(/ \\)   " WHITE ",-'    ,'",
+			WHITE "   -,    -, " RED "/   \\ " WHITE ",-'    ,-'",
+			WHITE "      ------" RED "(   )" WHITE "------'",
+			WHITE "  ,----------" RED "(   )" WHITE "----------,",
+			WHITE " |        _,-" RED "(   )" WHITE "-,_        |",
+			WHITE "  -,__,-'   " RED "\\   /" WHITE "   -,__,-'",
+			RED "              | |",
 			"              | |",
 			"              | |",
 			"              | |",
 			"              | |",
 			"              | |",
-			"              `|'",
+			"              |'",
 			NULL
 		}
-	},
+	}
 };
 
 void print_logo(const char *system) {
 	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
 		if (strcmp(system, logos[i].name) == 0) {
 			for (int j = 0; logos[i].lines[j] != NULL; j++) {
-				printf("%s%s\n", logos[i].lines[j], CEND);
+				if (color_flag) {
+					printf("%s%s\n", logos[i].lines[j], CEND);
+				} else {
+					printf("%s\n", logos[i].lines[j]);
+				}
 			}
 			return;
 		}
