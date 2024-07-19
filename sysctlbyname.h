@@ -17,4 +17,5 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
+// Declaration of the sysctlbyname function, which retrieves or sets a system control value by name
 extern int sysctlbyname(const char *, void *, size_t *, void *, size_t);
