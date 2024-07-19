@@ -31,3 +31,10 @@ clean:
 install:
 	install -d /usr/local/bin
 	install -m 755 ${EXE} /usr/local/bin
+	install -d /usr/local/share/doc/logo
+	install -m 644 logo/* /usr/local/share/doc/logo/
+
+.PHONY: uninstall
+uninstall:
+	rm -f /usr/local/bin/${EXE}
+	rm -rf /usr/local/share/doc/logo/

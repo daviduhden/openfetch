@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2022 - 2023 jhx <jhx0x00@gmail.com>
- * Copyright (c) 2024 David Uhden Collado <david@uhden.dev>
- *
- * Permission to use, copy, modify, and distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
-
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/utsname.h>
@@ -35,215 +18,210 @@
 
 #define VERSION "1.0"
 
-static char buf[BUFSIZ]; /* buffer large enough for everything */
+#define LOGO_PATH1 "./logo/"
+#define LOGO_PATH2 "/usr/local/share/doc/logo/"
+#define MAX_LOGO_LINES 30
+#define MAX_LINE_LENGTH 256
 
 typedef struct {
 	const char *name;
-	const char *lines[30];
+	char lines[MAX_LOGO_LINES][MAX_LINE_LENGTH];
 } Logo;
 
-Logo logos[] = {
-	{
-		"FreeBSD",
-		{
-			"               ,        ,",
-			"              /(        )`",
-			"              \\ \\___   / |",
-			"              /- _  `-/  '",
-			"             /\\/ \\   /\\",
-			"            / /   | `    \\",
-			"           O O   ) /    |",
-			"           `-^--'`<     '",
-			"          (_.)  _  )   /",
-			"           `.___/`    /",
-			"             `-----' /",
-			"<----.     __ / __   \\",
-			"<----|====O)))==) \\) /====|",
-			"<----'    `--' `.__,' \\",
-			"             |        |",
-			"              \\       /       /\\",
-			"         ______( (_  / \\______/",
-			"       ,'  ,-----'   |",
-			"       `--{__________)"
-		}
-	},
-	{
-		"NetBSD",
-		{
-			"                     `-/oshdmNMNdhyo+:-`",
-			"y/s+:-``    `.-:+oydNMMMMNhs/-``",
-			"-m+NMMMMMMMMMMMMMMMMMMMNdhmNMMMmdhs+/-`",
-			" -m+NMMMMMMMMMMMMMMMMMMMMmy+:`",
-			"  -N/dMMMMMMMMMMMMMMMds:`",
-			"   -N/hMMMMMMMMMmho:`",
-			"    -N-:/++/:.`",
-			"     :M+",
-			"      :Mo",
-			"       :Ms",
-			"        :Ms",
-			"         :Ms",
-			"          :Ms",
-			"           :Ms",
-			"            :Ms",
-			"             :Ms",
-			"              :Ms"
-		}
-	},
-	{
-		"OpenBSD",
-		{
-			"                                     _",
-			"                                    (_)",
-			"              |    .",
-			"          .   |L  /|   .         _",
-			"      _ . |\\ _| \\--+._/| .       (_)",
-			"     / ||\\| Y J  )   / |/| ./",
-			"    J  |)'( |        ` F`.'/       _",
-			"  -<|  F         __     .-<        (_)",
-			"    | /       .-' . `.  /-. L___",
-			"    J \\      <    \\  | | O \\|.-' _",
-			"  _J \\  .-    \\/ O | | \\  |F    (_)",
-			" '-F  -<_.     \\   .-'  `-' L__",
-			"__J  _   _.     >-'  )_.   |-'",
-			" `-|.'   /_.          \\_|  F",
-			"  /.-   .                _.<",
-			" /'    /.'             .'  `\\",
-			"  /L  /'   |/      _.-'-\\",
-			" /'J       ___.---'\\|",
-			"   |\\  .--' V  | `. `",
-			"   |/`. `-.     `._)",
-			"      / .-.\\",
-			"      \\ (  `\\",
-			"       `.\\"
-		}
-	},
-	{
-		"DragonFly",
-		{
-			",--,           |           ,--,",
-			"|   `-,       ,^,       ,-'   |",
-			" `,    `-,   (/ \\)   ,-'    ,'",
-			"   `-,    `-,/   \\,-'    ,-",
-			"      `------(   )------",
-			"  ,----------(   )----------,",
-			" |        _,-(   )-,_        |",
-			"  `-,__,-'   \\   /   `-,__,-'",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              | |",
-			"              `|'"
+static char buf[BUFSIZ]; /* buffer large enough for everything */
+
+void read_logo(Logo *logo, const char *filename) {
+	FILE *file;
+	char filepath1[MAX_LINE_LENGTH], filepath2[MAX_LINE_LENGTH];
+	snprintf(filepath1, sizeof(filepath1), "%s%s", LOGO_PATH1, filename);
+	snprintf(filepath2, sizeof(filepath2), "%s%s", LOGO_PATH2, filename);
+
+	if ((file = fopen(filepath1, "r")) == NULL) {
+		if ((file = fopen(filepath2, "r")) == NULL) {
+			fprintf(stderr, "Error: Unable to open logo file from either path.\n");
+			exit(1);
 		}
 	}
-};
 
-void print_logo(const char *system) {
-	for (size_t i = 0; i < sizeof(logos) / sizeof(logos[0]); i++) {
-		if (strcmp(system, logos[i].name) == 0) {
-			for (int j = 0; logos[i].lines[j] != NULL; j++) {
-				printf("%s\n", logos[i].lines[j]);
-			}
-			return;
-		}
+	int i = 0;
+	while (fgets(logo->lines[i], MAX_LINE_LENGTH, file) && i < MAX_LOGO_LINES) {
+		logo->lines[i][strcspn(logo->lines[i], "\n")] = 0;  // Remove newline character
+		i++;
 	}
-	fprintf(stderr, "Unsupported BSD variant: %s\n", system);
+	fclose(file);
 }
 
-void detect_and_print_logo(void) {
-#if defined(__FreeBSD__)
-	print_logo("FreeBSD");
-#elif defined(__OpenBSD__)
-	print_logo("OpenBSD");
-#elif defined(__NetBSD__)
-	print_logo("NetBSD");
-#elif defined(__DragonFly__)
-	print_logo("DragonFly");
-#else
-#error Unsupported BSD variant
-#endif
-}
-
-static void cpr(char *fld, char *fmt, ...) {
-	va_list ap;
-	printf("%s: ", fld);
-	va_start(ap, fmt);
-	vprintf(fmt, ap);
-	va_end(ap);
-	printf("\n");
-}
-
-/**
- * Squeeze multiple adjacent blank chars. into a single space.
- */
-static void sqz(char *s) {
-	for (char *p = s; *p; p++) {
-		size_t n;
-		if ((n = strspn(p, " \t")) > 0) {
-			*p = ' ';
-			memmove(p + 1, p + n, strlen(p + n) + 1);
-		}
+void append_info(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines, const char *fmt, ...) {
+	if (*info_lines >= MAX_LOGO_LINES) {
+		return;
 	}
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(info[*info_lines], MAX_LINE_LENGTH, fmt, args);
+	va_end(args);
+	(*info_lines)++;
 }
 
-static void get_shell(void) {
+void get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+	struct utsname un;
+	char *p;
+
+	if (uname(&un)) {
+		err(1, "uname() failed");
+	}
+	append_info(info, info_lines, "OS: %s", un.sysname);
+	append_info(info, info_lines, "Release: %s", un.release);
+	if ((p = strchr(un.version, ':')) != NULL) {
+		*p = '\0'; /* NetBSD: lop-off build-strings */
+	}
+	append_info(info, info_lines, "Version: %s", un.version);
+	append_info(info, info_lines, "Arch: %s", un.machine);
+}
+
+void get_hostname(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+	if (gethostname(buf, sizeof buf) == -1) {
+		err(1, "gethostname() failed");
+	}
+	append_info(info, info_lines, "Host: %s", buf);
+}
+
+void get_shell(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct passwd *pw;
 	char *sh, *p;
 
 	if ((sh = getenv("SHELL")) == NULL || *sh == '\0') {
-		if ((pw = getpwuid(getuid())) == NULL)
+		if ((pw = getpwuid(getuid())) == NULL) {
 			err(1, "getpwuid() failed");
+		}
 		sh = pw->pw_shell;
 	}
-	if ((p = strrchr(sh, '/')) != NULL && *(p + 1) != '\0')
+	if ((p = strrchr(sh, '/')) != NULL && *(p + 1) != '\0') {
 		sh = ++p;
-	cpr("Shell", sh);
+	}
+	append_info(info, info_lines, "Shell: %s", sh);
 }
 
-static void get_user(void) {
+void get_user(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct passwd *pw;
 	char *p;
 
 	if ((p = getenv("USER")) == NULL || *p == '\0') {
-		if ((pw = getpwuid(getuid())) == NULL)
+		if ((pw = getpwuid(getuid())) == NULL) {
 			err(1, "getpwuid() failed");
+		}
 		p = pw->pw_name;
 	}
-	cpr("User", p);
+	append_info(info, info_lines, "User: %s", p);
 }
 
-static void get_cpu(void) {
+void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+	const char *cmd;
+
+#if defined(__OpenBSD__) || defined(__NetBSD__)
+	cmd = "/usr/sbin/pkg_info";
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
+	cmd = "/usr/sbin/pkg info";
+#else
+	#error Unsupported BSD variant
+#endif
+
+	FILE *f = popen(cmd, "r");
+	if (f == NULL) {
+		err(1, "popen(%s) failed", cmd);
+	}
+
+	/* No. of packages == simple line count */
+	size_t npkg = 0;
+	while (fgets(buf, sizeof buf, f) != NULL) {
+		if (strchr(buf, '\n') != NULL) {
+			npkg++;
+		}
+	}
+
+	if (pclose(f) != 0) {
+		err(1, "pclose(%s) failed", cmd);
+	}
+
+	append_info(info, info_lines, "Packages: %zu", npkg);
+}
+
+void get_uptime(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+	long up, days, hours, mins;
+	struct timeval t;
+	size_t tsz = sizeof t;
+
+	if (sysctlbyname("kern.boottime", &t, &tsz, NULL, 0) == -1) {
+		err(1, "failed to get kern.boottime");
+	}
+
+	up = (long)(time(NULL) - t.tv_sec + 30);
+	days = up / 86400;
+	up %= 86400;
+	hours = up / 3600;
+	up %= 3600;
+	mins = up / 60;
+
+	append_info(info, info_lines, "Uptime: %ldd %ldh %ldm", days, hours, mins);
+}
+
+void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+	unsigned long long ramsz;
+	long pagesz, npages;
+
+	if ((pagesz = sysconf(_SC_PAGESIZE)) == -1) {
+		err(1, "error getting system page-size");
+	}
+	if ((npages = sysconf(_SC_PHYS_PAGES)) == -1) {
+		err(1, "error getting no. of system pages");
+	}
+
+	ramsz = (unsigned long long)(pagesz * npages) / (1024 * 1024);
+	append_info(info, info_lines, "RAM: %llu MB", ramsz);
+}
+
+void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+	double lavg[3] = {0.0};
+
+	if (getloadavg(lavg, 3) != 3) {
+		err(1, "getloadavg() failed");
+	}
+	append_info(info, info_lines, "Loadavg: %.2lf %.2lf %.2lf", lavg[0], lavg[1], lavg[2]);
+}
+
+void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	long ncpu, nmax;
 	size_t sz;
 
-	if ((ncpu = sysconf(_SC_NPROCESSORS_ONLN)) == -1)
+	if ((ncpu = sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
 		err(1, "sysconf(_SC_NPROCESSORS_ONLN) failed");
-	if ((nmax = sysconf(_SC_NPROCESSORS_CONF)) == -1)
+	}
+	if ((nmax = sysconf(_SC_NPROCESSORS_CONF)) == -1) {
 		err(1, "sysconf(_SC_NPROCESSORS_CONF) failed");
+	}
 
 	sz = sizeof buf;
-	if (sysctlbyname("machdep.cpu_brand", buf, &sz, NULL, 0) == -1)
-		if (sysctlbyname("hw.model", buf, &sz, NULL, 0) == -1)
+	if (sysctlbyname("machdep.cpu_brand", buf, &sz, NULL, 0) == -1) {
+		if (sysctlbyname("hw.model", buf, &sz, NULL, 0) == -1) {
 			err(1, "error getting CPU info.");
+		}
+	}
 
 	buf[sz] = '\0';
-	sqz(buf); /* NetBSD needs this */
-	cpr("CPU", buf);
-	cpr("Cores", "%ld of %ld processors online", ncpu, nmax);
+	append_info(info, info_lines, "CPU: %s", buf);
+	append_info(info, info_lines, "Cores: %ld of %ld processors online", ncpu, nmax);
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
-#define CELSIUS 273.15
+	#define CELSIUS 273.15
 	for (int i = 0; i < (int)ncpu; i++) {
 		int temp = 0;
 
 		sz = sizeof temp;
 		snprintf(buf, sizeof buf, "dev.cpu.%d.temperature", i);
-		if (sysctlbyname(buf, &temp, &sz, NULL, 0) == -1)
+		if (sysctlbyname(buf, &temp, &sz, NULL, 0) == -1) {
 			return;
-		printf(" -> ");
-		snprintf(buf, sizeof buf, "Core [%d]", i + 1);
-		cpr(buf, "%.1f °C", (temp * 0.1) - CELSIUS);
+		}
+		snprintf(buf, sizeof buf, "Core [%d] Temp", i + 1);
+		append_info(info, info_lines, "%s: %.1f °C", buf, (temp * 0.1) - CELSIUS);
 	}
 
 #elif defined(__OpenBSD__)
@@ -257,118 +235,85 @@ static void get_cpu(void) {
 	mib[4] = 0;
 
 	sz = sizeof sensors;
-	if (sysctl(mib, 5, &sensors, &sz, NULL, 0) == -1)
+	if (sysctl(mib, 5, &sensors, &sz, NULL, 0) == -1) {
 		return;
-	cpr("CPU Temp", "%d °C", (int)((float)(sensors.value - 273150000) / 1E6));
+	}
+	append_info(info, info_lines, "CPU Temp: %d °C", (int)((float)(sensors.value - 273150000) / 1E6));
 
 #elif defined(__NetBSD__)
-	const char *const cmd = "/usr/sbin/envstat |"
-							" awk '/ cpu[0-9]+ temperature: / { print $3 }'";
+	const char *const cmd = "/usr/sbin/envstat | awk '/ cpu[0-9]+ temperature: / { print $3 }'";
 	FILE *f = popen(cmd, "r");
-	if (f == NULL)
+	if (f == NULL) {
 		err(1, "popen(%s) failed", cmd);
+	}
 	int i = 0;
 
 	while (fgets(buf, sizeof buf, f) != NULL) {
 		float temp;
 
-		if (sscanf(buf, "%f", &temp) != 1)
+		if (sscanf(buf, "%f", &temp) != 1) {
 			break;
-		printf(" -> ");
-		snprintf(buf, sizeof buf, "Core [%d]", ++i);
-		cpr(buf, "%.1f °C", temp);
+		}
+		snprintf(buf, sizeof buf, "Core [%d] Temp", ++i);
+		append_info(info, info_lines, "%s: %.1f °C", buf, temp);
 	}
 
-	if (pclose(f) != 0)
+	if (pclose(f) != 0) {
 		err(1, "pclose(%s) failed", cmd);
+	}
 #endif
 }
 
-static void get_loadavg(void) {
-	double lavg[3] = {0.0};
+void print_logo_and_info(Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int info_lines) {
+	int logo_lines = 0;
+	while (logo->lines[logo_lines][0] != '\0' && logo_lines < MAX_LOGO_LINES) {
+		logo_lines++;
+	}
 
-	if (getloadavg(lavg, 3) != 3)
-		err(1, "getloadavg() failed");
-	cpr("Loadavg", "%.2lf %.2lf %.2lf", lavg[0], lavg[1], lavg[2]);
+	int max_lines = logo_lines > info_lines ? logo_lines : info_lines;
+
+	for (int i = 0; i < max_lines; i++) {
+		if (i < logo_lines) {
+			printf("%-40s", logo->lines[i]);
+		} else {
+			printf("%-40s", "");
+		}
+
+		if (i < info_lines) {
+			printf("  %s", info[i]);
+		}
+		printf("\n");
+	}
 }
 
-static void get_packages(void) {
+void detect_and_print_logo(void) {
+	Logo logo = {0};
+	char info[MAX_LOGO_LINES][MAX_LINE_LENGTH] = {{0}};
+	int info_lines = 0;
 
-#if defined(__OpenBSD__) || defined(__NetBSD__)
-	const char *const cmd = "/usr/sbin/pkg_info";
-
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
-	const char *const cmd = "/usr/sbin/pkg info";
-
+#if defined(__FreeBSD__)
+	read_logo(&logo, "freebsd.txt");
+#elif defined(__OpenBSD__)
+	read_logo(&logo, "openbsd.txt");
+#elif defined(__NetBSD__)
+	read_logo(&logo, "netbsd.txt");
+#elif defined(__DragonFly__)
+	read_logo(&logo, "dragonfly.txt");
 #else
-#error Unsupported BSD variant
+	#error Unsupported BSD variant
 #endif
 
-	FILE *f = popen(cmd, "r");
-	if (f == NULL)
-		err(1, "popen(%s) failed", cmd);
+	get_sysinfo(info, &info_lines);
+	get_hostname(info, &info_lines);
+	get_shell(info, &info_lines);
+	get_user(info, &info_lines);
+	get_packages(info, &info_lines);
+	get_uptime(info, &info_lines);
+	get_memory(info, &info_lines);
+	get_loadavg(info, &info_lines);
+	get_cpu(info, &info_lines);
 
-	/* No. of packages == simple line count */
-	size_t npkg = 0;
-	while (fgets(buf, sizeof buf, f) != NULL)
-		if (strchr(buf, '\n') != NULL)
-			npkg++;
-
-	if (pclose(f) != 0)
-		err(1, "pclose(%s) failed", cmd);
-
-	cpr("Packages", "%zu", npkg);
-}
-
-static void get_uptime(void) {
-	long up, days, hours, mins;
-	struct timeval t;
-	size_t tsz = sizeof t;
-
-	if (sysctlbyname("kern.boottime", &t, &tsz, NULL, 0) == -1)
-		err(1, "failed to get kern.boottime");
-
-	up = (long)(time(NULL) - t.tv_sec + 30);
-	days = up / 86400;
-	up %= 86400;
-	hours = up / 3600;
-	up %= 3600;
-	mins = up / 60;
-
-	cpr("Uptime", "%ldd %ldh %ldm", days, hours, mins);
-}
-
-static void get_memory(void) {
-	unsigned long long ramsz;
-	long pagesz, npages;
-
-	if ((pagesz = sysconf(_SC_PAGESIZE)) == -1)
-		err(1, "error getting system page-size");
-	if ((npages = sysconf(_SC_PHYS_PAGES)) == -1)
-		err(1, "error getting no. of system pages");
-
-	ramsz = (unsigned long long)(pagesz * npages) / (1024 * 1024);
-	cpr("RAM", "%llu MB", ramsz);
-}
-
-static void get_hostname(void) {
-	if (gethostname(buf, sizeof buf) == -1)
-		err(1, "gethostname() failed");
-	cpr("Host", "%s", buf);
-}
-
-static void get_sysinfo(void) {
-	struct utsname un;
-	char *p;
-
-	if (uname(&un))
-		err(1, "uname() failed");
-	cpr("OS", un.sysname);
-	cpr("Release", un.release);
-	if ((p = strchr(un.version, ':')) != NULL)
-		*p = '\0'; /* NetBSD: lop-off build-strings */
-	cpr("Version", un.version);
-	cpr("Arch", "%s", un.machine);
+	print_logo_and_info(&logo, info, info_lines);
 }
 
 _Noreturn static void version(void) {
@@ -389,21 +334,13 @@ _Noreturn static void usage(void) {
 
 int main(int argc, char **argv) {
 	if (argc == 2) {
-		if (strcmp(argv[1], "-h") == 0)
+		if (strcmp(argv[1], "-h") == 0) {
 			usage();
-		else if (strcmp(argv[1], "-v") == 0)
+		} else if (strcmp(argv[1], "-v") == 0) {
 			version();
+		}
 	}
 	detect_and_print_logo();
-	get_sysinfo();
-	get_hostname();
-	get_shell();
-	get_user();
-	get_packages();
-	get_uptime();
-	get_memory();
-	get_loadavg();
-	get_cpu();
 
 	return EXIT_SUCCESS;
 }
