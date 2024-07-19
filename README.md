@@ -40,6 +40,6 @@ This will install `bsdfetch` to `/usr/local/bin` and the logo files to `/usr/loc
 
 To clean up the build files:
 
-```sh
-make clean
-```
+    ```sh
+    make clean
+    ```
