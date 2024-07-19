@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2022 - 2023 jhx <jhx0x00@gmail.com>
+ * Copyright (c) 2024 David Uhden Collado <david@uhden.dev>
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/utsname.h>
@@ -23,26 +40,34 @@
 #define MAX_LOGO_LINES 30
 #define MAX_LINE_LENGTH 256
 
+// Structure to store logo information
 typedef struct {
 	const char *name;
 	char lines[MAX_LOGO_LINES][MAX_LINE_LENGTH];
 } Logo;
 
-static char buf[BUFSIZ]; /* buffer large enough for everything */
+// Buffer for general use
+static char buf[BUFSIZ];
 
+// Function to read logo from a file
 void read_logo(Logo *logo, const char *filename) {
 	FILE *file;
 	char filepath1[MAX_LINE_LENGTH], filepath2[MAX_LINE_LENGTH];
+	
+	// Construct file paths
 	snprintf(filepath1, sizeof(filepath1), "%s%s", LOGO_PATH1, filename);
 	snprintf(filepath2, sizeof(filepath2), "%s%s", LOGO_PATH2, filename);
 
+	// Try to open the logo file from the first path
 	if ((file = fopen(filepath1, "r")) == NULL) {
+		// If it fails, try the second path
 		if ((file = fopen(filepath2, "r")) == NULL) {
 			fprintf(stderr, "Error: Unable to open logo file from either path.\n");
 			exit(1);
 		}
 	}
 
+	// Read the file line by line
 	int i = 0;
 	while (fgets(logo->lines[i], MAX_LINE_LENGTH, file) && i < MAX_LOGO_LINES) {
 		logo->lines[i][strcspn(logo->lines[i], "\n")] = 0;  // Remove newline character
@@ -51,6 +76,7 @@ void read_logo(Logo *logo, const char *filename) {
 	fclose(file);
 }
 
+// Function to append formatted information to the info array
 void append_info(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines, const char *fmt, ...) {
 	if (*info_lines >= MAX_LOGO_LINES) {
 		return;
@@ -62,6 +88,7 @@ void append_info(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines, co
 	(*info_lines)++;
 }
 
+// Function to get system information
 void get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct utsname un;
 	char *p;
@@ -72,12 +99,13 @@ void get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "OS: %s", un.sysname);
 	append_info(info, info_lines, "Release: %s", un.release);
 	if ((p = strchr(un.version, ':')) != NULL) {
-		*p = '\0'; /* NetBSD: lop-off build-strings */
+		*p = '\0'; // Truncate build-strings for NetBSD
 	}
 	append_info(info, info_lines, "Version: %s", un.version);
 	append_info(info, info_lines, "Arch: %s", un.machine);
 }
 
+// Function to get hostname
 void get_hostname(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	if (gethostname(buf, sizeof buf) == -1) {
 		err(1, "gethostname() failed");
@@ -85,6 +113,7 @@ void get_hostname(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "Host: %s", buf);
 }
 
+// Function to get shell information
 void get_shell(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct passwd *pw;
 	char *sh, *p;
@@ -101,6 +130,7 @@ void get_shell(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "Shell: %s", sh);
 }
 
+// Function to get user information
 void get_user(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct passwd *pw;
 	char *p;
@@ -114,9 +144,11 @@ void get_user(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "User: %s", p);
 }
 
+// Function to get the number of installed packages
 void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	const char *cmd;
 
+	// Select the appropriate command based on the OS
 #if defined(__OpenBSD__) || defined(__NetBSD__)
 	cmd = "/usr/sbin/pkg_info";
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
@@ -130,7 +162,7 @@ void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 		err(1, "popen(%s) failed", cmd);
 	}
 
-	/* No. of packages == simple line count */
+	// Count the number of lines in the output
 	size_t npkg = 0;
 	while (fgets(buf, sizeof buf, f) != NULL) {
 		if (strchr(buf, '\n') != NULL) {
@@ -145,6 +177,7 @@ void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "Packages: %zu", npkg);
 }
 
+// Function to get system uptime
 void get_uptime(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	long up, days, hours, mins;
 	struct timeval t;
@@ -164,6 +197,7 @@ void get_uptime(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "Uptime: %ldd %ldh %ldm", days, hours, mins);
 }
 
+// Function to get memory information
 void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	unsigned long long ramsz;
 	long pagesz, npages;
@@ -179,6 +213,7 @@ void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "RAM: %llu MB", ramsz);
 }
 
+// Function to get load average
 void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	double lavg[3] = {0.0};
 
@@ -188,6 +223,7 @@ void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "Loadavg: %.2lf %.2lf %.2lf", lavg[0], lavg[1], lavg[2]);
 }
 
+// Function to get CPU information
 void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	long ncpu, nmax;
 	size_t sz;
@@ -264,6 +300,7 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 #endif
 }
 
+// Function to print the logo and system information side by side
 void print_logo_and_info(Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int info_lines) {
 	int logo_lines = 0;
 	while (logo->lines[logo_lines][0] != '\0' && logo_lines < MAX_LOGO_LINES) {
@@ -286,11 +323,13 @@ void print_logo_and_info(Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH],
 	}
 }
 
+// Function to detect the OS and print the corresponding logo and system information
 void detect_and_print_logo(void) {
 	Logo logo = {0};
 	char info[MAX_LOGO_LINES][MAX_LINE_LENGTH] = {{0}};
 	int info_lines = 0;
 
+	// Select the appropriate logo file based on the OS
 #if defined(__FreeBSD__)
 	read_logo(&logo, "freebsd.txt");
 #elif defined(__OpenBSD__)
@@ -303,6 +342,7 @@ void detect_and_print_logo(void) {
 	#error Unsupported BSD variant
 #endif
 
+	// Get system information
 	get_sysinfo(info, &info_lines);
 	get_hostname(info, &info_lines);
 	get_shell(info, &info_lines);
@@ -313,9 +353,11 @@ void detect_and_print_logo(void) {
 	get_loadavg(info, &info_lines);
 	get_cpu(info, &info_lines);
 
+	// Print the logo and system information
 	print_logo_and_info(&logo, info, info_lines);
 }
 
+// Function to print the version information and exit
 _Noreturn static void version(void) {
 	printf("%s - version %s (%s)\n",
 		   getprogname(),
@@ -324,6 +366,7 @@ _Noreturn static void version(void) {
 	exit(EXIT_SUCCESS);
 }
 
+// Function to print the usage information and exit
 _Noreturn static void usage(void) {
 	printf("USAGE: %s [-h|-v]\n"
 		   "   -h  Show this help text\n"
@@ -332,6 +375,7 @@ _Noreturn static void usage(void) {
 	exit(EXIT_SUCCESS);
 }
 
+// Main function
 int main(int argc, char **argv) {
 	if (argc == 2) {
 		if (strcmp(argv[1], "-h") == 0) {
@@ -340,6 +384,7 @@ int main(int argc, char **argv) {
 			version();
 		}
 	}
+	// Detect the OS and print the corresponding logo and system information
 	detect_and_print_logo();
 
 	return EXIT_SUCCESS;
