@@ -1,6 +1,6 @@
-# Open Fetch
+# openfetch
 
-**Open Fetch** is a simple tool to display information about a running [**FreeBSD**](https://www.freebsd.org/), [**OpenBSD**](https://www.openbsd.org/), [**NetBSD**](https://www.netbsd.org/), or [**DragonFly**](https://www.dragonflybsd.org/) **BSD** system. Any contribution is highly appreciated.
+**openfetch** is a simple tool to display information about a running [**FreeBSD**](https://www.freebsd.org/), [**OpenBSD**](https://www.openbsd.org/), [**NetBSD**](https://www.netbsd.org/), or [**DragonFly**](https://www.dragonflybsd.org/) **BSD** system. Any contribution is highly appreciated.
 
 ## Usage
 
@@ -20,14 +20,14 @@
 	make
 	```
 
-4. Run openfetch:
+4. Run `openfetch`:
 	```sh
 	./openfetch
 	```
 
 ## Installation
 
-To install openfetch and the logo files:
+To install `openfetch` and the logo files:
 
 ```sh
 sudo make install
