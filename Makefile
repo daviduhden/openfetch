@@ -6,7 +6,7 @@ CFLAGS+=	-Weverything
 CFLAGS+=	-Wall -Wconversion -Wshadow -Wextra -Wpedantic
 .endif
 DFLAGS=	-g -ggdb
-EXE=	bsdfetch
+EXE=	openfetch
 DBG=	${EXE}.debug
 
 SRC=	openfetch.c
