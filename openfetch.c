@@ -369,8 +369,8 @@ _Noreturn static void version(void) {
 // Function to print the usage information and exit
 _Noreturn static void usage(void) {
 	printf("USAGE: %s [-h|-v]\n"
-		   "   -h  Show this help text\n"
-		   "   -v  Show version\n",
+		   "   -h  Show help this text.\n"
+		   "   -v  Show version information.\n",
 		   getprogname());
 	exit(EXIT_SUCCESS);
 }
