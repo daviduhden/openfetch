@@ -23,22 +23,28 @@
 #include "openbsd_internal.h"
 #include "sysctlbyname.h"
 
-int
-sysctlbyname(const char *name, void *oldp, size_t *oldlenp,
-    void *newp, size_t newlen)
+// Function to get or set a sysctl value by its name
+int sysctlbyname(const char *name, void *oldp, size_t *oldlenp,
+	void *newp, size_t newlen)
 {
 	int i, mib[2];
 
+	// Loop through the sysctlnames array to find the matching name
 	for (i = 0; sysctlnames[i].name != NULL; i++) {
+		// If the name matches, set the MIB (Management Information Base) values
 		if (!strcmp(name, sysctlnames[i].name)) {
 			mib[0] = sysctlnames[i].mib0;
 			mib[1] = sysctlnames[i].mib1;
 
+			// Call sysctl with the MIB values to get or set the value
 			return sysctl(mib, 2, oldp, oldlenp, newp, newlen);
 		}
 	}
 
+	// If the name is not found, set errno to ENOENT (No such file or directory)
 	errno = ENOENT;
 
+	// Return -1 to indicate failure
 	return (-1);
 }
+
