@@ -21,6 +21,8 @@
 #ifdef __OpenBSD__
 #include <sys/time.h>
 #include <sys/sensors.h>
+#include <unistd.h>
+#include <errno.h>
 #include "sysctlbyname.h"
 #endif
 
@@ -389,3 +391,20 @@ int main(int argc, char **argv) {
 
 	return EXIT_SUCCESS;
 }
+
+#if defined(__OpenBSD__)
+	// Restrict the program with pledge(2)
+	if (pledge("stdio rpath proc exec", NULL) == -1) {
+		err(1, "pledge");
+	}
+
+	// Limit the program's access to the file system with unveil(2)
+	if (unveil(LOGO_PATH1, "r") == -1 ||
+		unveil(LOGO_PATH2, "r") == -1 ||
+		unveil("/etc", "r") == -1 ||
+		unveil("/usr/sbin/pkg_info", "x") == -1 ||
+		unveil("/usr/sbin/envstat", "x") == -1 ||
+		unveil(NULL, NULL) == -1) {
+		err(1, "unveil");
+	}
+#endif
