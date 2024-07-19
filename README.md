@@ -1,6 +1,6 @@
 # bsdfetch
 
-**bsdfetch** is a simple tool to display information about a running [**FreeBSD**](https://www.freebsd.org/), [**OpenBSD**](https://www.openbsd.org/), [**NetBSD**](https://www.netbsd.org/), or [**DragonFly**](https://www.dragonflybsd.org/) **BSD** system.
+**bsdfetch** is a simple tool to display information about a running [**FreeBSD**](https://www.freebsd.org/), [**OpenBSD**](https://www.openbsd.org/), [**NetBSD**](https://www.netbsd.org/), or [**DragonFly**](https://www.dragonflybsd.org/) **BSD** system. Any contribution is highly appreciated.
 
 ## Usage
 
