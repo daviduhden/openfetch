@@ -9,7 +9,7 @@ DFLAGS=	-g -ggdb
 EXE=	bsdfetch
 DBG=	${EXE}.debug
 
-SRC=	bsdfetch.c
+SRC=	openfetch.c
 OS != uname -s
 .if ${OS} == "OpenBSD"
 SRC+=	sysctlbyname.c
