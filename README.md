@@ -4,23 +4,23 @@
 
 ## Usage
 
-1. **Clone or download this repository:**
+1. Clone or download this repository:
 	```sh
 	git clone https://github.com/daviduhden/bsdfetch.git
 	```
 	Or download the ZIP file and unpack it.
 
-2. **Navigate to the directory:**
+2. Navigate to the directory:
 	```sh
 	cd bsdfetch
 	```
 
-3. **Build the executable:**
+3. Build the executable:
 	```sh
 	make
 	```
 
-4. **Run bsdfetch:**
+4. Run bsdfetch:
 	```sh
 	./bsdfetch
 	```
@@ -29,10 +29,9 @@
 
 To install bsdfetch and the logo files:
 
-1. **Install the executable and logo files:**
-	```sh
-	sudo make install
-	```
+```sh
+sudo make install
+```
 
 This will install `bsdfetch` to `/usr/local/bin` and the logo files to `/usr/local/share/doc/logo/`.
 
@@ -40,6 +39,6 @@ This will install `bsdfetch` to `/usr/local/bin` and the logo files to `/usr/loc
 
 To clean up the build files:
 
-	```sh
-	make clean
-	```
+```sh
+make clean
+```
