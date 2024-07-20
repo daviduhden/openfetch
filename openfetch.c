@@ -343,6 +343,7 @@ void detect_and_print_logo(void) {
 		unveil("/etc", "r") == -1 ||
 		unveil("/usr/sbin/pkg_info", "x") == -1 ||
 		unveil("/usr/sbin/envstat", "x") == -1 ||
+		unveil("/tmp", "rwc") == -1 ||
 		unveil(NULL, NULL) == -1) {
 		err(1, "unveil");
 	}
