@@ -333,7 +333,7 @@ void detect_and_print_logo(void) {
 
 #if defined(__OpenBSD__)
 	// Restrict the program with pledge(2)
-	if (pledge("stdio rpath proc exec", NULL) == -1) {
+	if (pledge("stdio rpath proc exec unveil", NULL) == -1) {
 		err(1, "pledge");
 	}
 
@@ -343,7 +343,6 @@ void detect_and_print_logo(void) {
 		unveil("/etc", "r") == -1 ||
 		unveil("/usr/sbin/pkg_info", "x") == -1 ||
 		unveil("/usr/sbin/envstat", "x") == -1 ||
-		unveil("/tmp", "rwc") == -1 ||
 		unveil(NULL, NULL) == -1) {
 		err(1, "unveil");
 	}
