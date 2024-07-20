@@ -21,8 +21,6 @@
 #ifdef __OpenBSD__
 #include <sys/time.h>
 #include <sys/sensors.h>
-#include <unistd.h>
-#include <errno.h>
 #include "sysctlbyname.h"
 #endif
 
