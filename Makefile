@@ -3,7 +3,7 @@ CFLAGS=	-O2 -fomit-frame-pointer -pipe
 .if ${CC} == "clang"
 CFLAGS+=	-Weverything
 .else
-CFLAGS+=	-Wall -Wconversion -Wshadow -Wextra -Wpedantic
+CFLAGS+=	-Wall -Wconversion -Wshadow -Wextra -Wpedantic -gdwarf-2
 .endif
 DFLAGS=	-g -ggdb
 EXE=	openfetch
