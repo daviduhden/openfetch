@@ -333,7 +333,7 @@ void detect_and_print_logo(void) {
 
 #if defined(__OpenBSD__)
 	// Restrict the program with pledge(2)
-	if (pledge("stdio rpath tmppath getpw proc exec unveil", NULL) == -1) {
+	if (pledge("stdio rpath tmppath getpw proc exec dns unveil", NULL) == -1) {
 		err(1, "pledge");
 	}
 
