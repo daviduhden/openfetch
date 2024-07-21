@@ -33,7 +33,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define VERSION "1.0.0"
+#define VERSION "1.0"
 
 #define LOGO_PATH1 "./logo/"
 #define LOGO_PATH2 "/usr/local/share/doc/logo/"
