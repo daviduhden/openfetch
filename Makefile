@@ -32,42 +32,43 @@ MAN=	openfetch.1
 
 # Rule to build the executable
 ${EXE}: ${SRC}
-	echo "Building ${EXE}..."
-	${CC} ${CFLAGS} -s -o $@ $>
+	@echo "Building ${EXE}..."
+	@${CC} ${CFLAGS} -s -o $@ $>
 
 # Rule to build the debug version
 ${DBG}: ${SRC}
-	echo "Building debug version ${DBG}..."
-	${CC} ${DFLAGS} -o $@ $>
+	@echo "Building debug version ${DBG}..."
+	@${CC} ${DFLAGS} -o $@ $>
 
 # Default target to build both release and debug versions
+.PHONY: all
 all: ${EXE} ${DBG}
 
 # Phony target to clean up build artifacts
 .PHONY: clean
 clean:
-	echo "Cleaning up..."
-	rm -f ${EXE} ${DBG}
+	@echo "Cleaning up..."
+	@rm -f ${EXE} ${DBG}
 
 # Phony target to install the executable and other files
 .PHONY: install
 install: ${EXE}
-	echo "Installing ${EXE} to /usr/local/bin..."
-	install -d /usr/local/bin
-	install -m 755 ${EXE} /usr/local/bin
-	echo "Installing logo files to /usr/local/share/doc/logo/..."
-	install -d /usr/local/share/doc/logo
-	install -m 644 logo/* /usr/local/share/doc/logo/
-	echo "Installing man page to /usr/local/man/man1..."
-	install -d /usr/local/man/man1
-	install -m 644 ${MAN} /usr/local/man/man1
+	@echo "Installing ${EXE} to /usr/local/bin..."
+	@install -d /usr/local/bin
+	@install -m 755 ${EXE} /usr/local/bin
+	@echo "Installing logo files to /usr/local/share/doc/logo/..."
+	@install -d /usr/local/share/doc/logo
+	@install -m 644 logo/* /usr/local/share/doc/logo/
+	@echo "Installing man page to /usr/local/man/man1..."
+	@install -d /usr/local/man/man1
+	@install -m 644 ${MAN} /usr/local/man/man1
 
 # Phony target to uninstall the executable and other files
 .PHONY: uninstall
 uninstall:
-	echo "Uninstalling ${EXE} from /usr/local/bin..."
-	rm -f /usr/local/bin/${EXE}
-	echo "Removing /usr/local/share/doc/logo/..."
-	rm -rf /usr/local/share/doc/logo/
-	echo "Removing man page from /usr/local/man/man1..."
-	rm -f /usr/local/man/man1/${MAN}
+	@echo "Uninstalling ${EXE} from /usr/local/bin..."
+	@rm -f /usr/local/bin/${EXE}
+	@echo "Removing /usr/local/share/doc/logo/..."
+	@rm -rf /usr/local/share/doc/logo/
+	@echo "Removing man page from /usr/local/man/man1..."
+	@rm -f /usr/local/man/man1/${MAN}
