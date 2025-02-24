@@ -232,7 +232,9 @@ void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	if (getloadavg(lavg, 3) == -1) {
 		err(1, "getloadavg() failed");
 	}
-	append_info(info, info_lines, "Loadavg: %.2lf %.2lf %.2lf", lavg[0], lavg[1], lavg[2]);
+	append_info(info, info_lines, "Load average (1 min): %.2lf", lavg[0]);
+	append_info(info, info_lines, "Load average (5 min): %.2lf", lavg[1]);
+	append_info(info, info_lines, "Load average (15 min): %.2lf", lavg[2]);
 }
 
 // Function to get CPU information
