@@ -229,7 +229,7 @@ void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	double lavg[3] = {0.0};
 
 	// Get the load average
-	if (getloadavg(lavg, 3) != 3) {
+	if (getloadavg(lavg, 3) == -1) {
 		err(1, "getloadavg() failed");
 	}
 	append_info(info, info_lines, "Loadavg: %.2lf %.2lf %.2lf", lavg[0], lavg[1], lavg[2]);
