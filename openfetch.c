@@ -15,6 +15,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#define _POSIX_C_SOURCE 200809L
+
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/utsname.h>
