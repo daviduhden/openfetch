@@ -2,7 +2,7 @@
 CC?=	clang
 
 # Common compilation flags
-CFLAGS=	-O2 -fomit-frame-pointer -pipe
+CFLAGS=	-O2 -fomit-frame-pointer -pipe -std=c11
 
 # Additional flags for clang
 .if ${CC} == "clang"

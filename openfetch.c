@@ -32,6 +32,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdnoreturn.h>
 
 #define VERSION "1.0"
 
@@ -358,7 +359,7 @@ void detect_and_print_logo(void) {
 }
 
 // Function to print the version information and exit
-_Noreturn static void version(void) {
+noreturn static void version(void) {
 	printf("%s - version %s (%s)\n",
 		   getprogname(),
 		   VERSION,
@@ -367,7 +368,7 @@ _Noreturn static void version(void) {
 }
 
 // Function to print the usage information and exit
-_Noreturn static void usage(void) {
+noreturn static void usage(void) {
 	printf("USAGE: %s [-h|-v]\n"
 		   "   -h  Show help this text.\n"
 		   "   -v  Show version information.\n",
