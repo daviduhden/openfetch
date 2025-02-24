@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - 2023 jhx <jhx0x00@gmail.com>
+ * Copyright (c) 2022-2023 jhx <jhx0x00@gmail.com>
  * Copyright (c) 2024-2025 David Uhden Collado <david@uhden.dev>
  *
  * Permission to use, copy, modify, and distribute this software for any
@@ -65,7 +65,7 @@ void read_logo(Logo *logo, const char *filename) {
 	if ((file = fopen(filepath1, "r")) == NULL) {
 		// If it fails, try the second path
 		if ((file = fopen(filepath2, "r")) == NULL) {
-			fprintf(stderr, "Error: Unable to open logo file from either path.\n");
+			fprintf(stderr, "Error: Unable to open logo file from either path: '%s' or '%s'.\n", filepath1, filepath2);
 			exit(1);
 		}
 	}
@@ -245,7 +245,7 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 		}
 	}
 
-	buf[sz] = '\0';
+	buf[sz - 1] = '\0';
 	append_info(info, info_lines, "CPU: %s", buf);
 	append_info(info, info_lines, "Cores: %ld of %ld processors online", ncpu, nmax);
 
@@ -328,7 +328,7 @@ void print_logo_and_info(Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH],
 
 // Function to detect the OS and print the corresponding logo and system information
 void detect_and_print_logo(void) {
-	Logo logo = {0};
+	Logo logo;
 	char info[MAX_LOGO_LINES][MAX_LINE_LENGTH] = {{0}};
 	int info_lines = 0;
 
@@ -378,11 +378,33 @@ noreturn static void usage(void) {
 	exit(EXIT_SUCCESS);
 }
 
+// Function to print the usage information and exit
+noreturn static void usage(void) {
+	printf("USAGE: %s [-h|-v]\n"
+		   "   -h  Show help this text.\n"
+		   "   -v  Show version information.\n",
+		   getprogname());
+	exit(EXIT_SUCCESS);
+}
+
 // Main function
 int main(int argc, char **argv) {
 	if (argc == 2) {
 		if (strcmp(argv[1], "-h") == 0) {
 			usage();
+		} else if (strcmp(argv[1], "-v") == 0) {
+			version();
+		} else {
+			// Detect the OS and print the corresponding logo and system information
+			detect_and_print_logo();
+		}
+	} else {
+		// Detect the OS and print the corresponding logo and system information
+		detect_and_print_logo();
+	}
+
+	return EXIT_SUCCESS;
+}
 		} else if (strcmp(argv[1], "-v") == 0) {
 			version();
 		}

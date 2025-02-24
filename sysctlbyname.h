@@ -18,5 +18,17 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
-// Declaration of the sysctlbyname function, which retrieves or sets a system control value by name
+/*
+ * Declaration of the sysctlbyname function.
+ * 
+ * Parameters:
+ * - const char *name: The name of the system control variable.
+ * - void *oldp: A pointer to a buffer where the value of the system control variable will be stored.
+ * - size_t *oldlenp: A pointer to a variable that specifies the size of the buffer pointed to by oldp.
+ * - void *newp: A pointer to a buffer containing the new value to be set for the system control variable.
+ * - size_t newlen: The size of the buffer pointed to by newp.
+ * 
+ * Return value:
+ * - Returns 0 on success, or -1 on error with errno set to indicate the error.
+ */
 extern int sysctlbyname(const char *, void *, size_t *, void *, size_t);

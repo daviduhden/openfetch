@@ -28,11 +28,11 @@
 int sysctlbyname(const char *name, void *oldp, size_t *oldlenp,
 	void *newp, size_t newlen)
 {
-	int i, mib[2];
+	int mib[2];
 
-	// Loop through the sysctlnames array to find the matching name
-	for (i = 0; sysctlnames[i].name != NULL; i++) {
-		// If the name matches, set the MIB (Management Information Base) values
+	// Find the matching name in sysctlnames array
+	for (int i = 0; sysctlnames[i].name != NULL; i++) {
+		// Set MIB values if name matches
 		if (!strcmp(name, sysctlnames[i].name)) {
 			mib[0] = sysctlnames[i].mib0;
 			mib[1] = sysctlnames[i].mib1;
@@ -42,7 +42,7 @@ int sysctlbyname(const char *name, void *oldp, size_t *oldlenp,
 		}
 	}
 
-	// If the name is not found, set errno to ENOENT (No such file or directory)
+	// Set errno to ENOENT if name not found
 	errno = ENOENT;
 
 	// Return -1 to indicate failure
