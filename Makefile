@@ -72,3 +72,13 @@ uninstall:
 	@rm -rf /usr/local/share/doc/logo/
 	@echo "Removing man page from /usr/local/man/man1..."
 	@rm -f /usr/local/man/man1/${MAN}
+
+# Phony target to display help
+.PHONY: help
+help:
+	@echo "Available targets:"
+	@echo "  all        - Build both release and debug versions"
+	@echo "  clean      - Clean up build artifacts"
+	@echo "  install    - Install the executable and other files"
+	@echo "  uninstall  - Uninstall the executable and other files"
+	@echo "  help       - Display this help message"
