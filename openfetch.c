@@ -96,6 +96,7 @@ void get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct utsname un;
 	char *p;
 
+	// Get system information using uname
 	if (uname(&un)) {
 		err(1, "uname() failed");
 	}
@@ -110,6 +111,7 @@ void get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 
 // Function to get hostname
 void get_hostname(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+	// Get the hostname
 	if (gethostname(buf, sizeof buf) == -1) {
 		err(1, "gethostname() failed");
 	}
@@ -121,6 +123,7 @@ void get_shell(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct passwd *pw;
 	char *sh, *p;
 
+	// Get the shell from environment variable or passwd entry
 	if ((sh = getenv("SHELL")) == NULL || *sh == '\0') {
 		if ((pw = getpwuid(getuid())) == NULL) {
 			err(1, "getpwuid() failed");
@@ -138,6 +141,7 @@ void get_user(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct passwd *pw;
 	char *p;
 
+	// Get the user from environment variable or passwd entry
 	if ((p = getenv("USER")) == NULL || *p == '\0') {
 		if ((pw = getpwuid(getuid())) == NULL) {
 			err(1, "getpwuid() failed");
@@ -160,12 +164,12 @@ void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	#error Unsupported BSD variant
 #endif
 
+	// Execute the command and count the number of lines in the output
 	FILE *f = popen(cmd, "r");
 	if (f == NULL) {
 		err(1, "popen(%s) failed", cmd);
 	}
 
-	// Count the number of lines in the output
 	size_t npkg = 0;
 	while (fgets(buf, sizeof buf, f) != NULL) {
 		if (strchr(buf, '\n') != NULL) {
@@ -186,10 +190,12 @@ void get_uptime(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	struct timeval t;
 	size_t tsz = sizeof t;
 
+	// Get the system boot time
 	if (sysctlbyname("kern.boottime", &t, &tsz, NULL, 0) == -1) {
 		err(1, "failed to get kern.boottime");
 	}
 
+	// Calculate the uptime
 	up = (long)(time(NULL) - t.tv_sec + 30);
 	days = up / 86400;
 	up %= 86400;
@@ -205,6 +211,7 @@ void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	unsigned long long ramsz;
 	long pagesz, npages;
 
+	// Get the system page size and number of pages
 	if ((pagesz = sysconf(_SC_PAGESIZE)) == -1) {
 		err(1, "error getting system page-size");
 	}
@@ -212,6 +219,7 @@ void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 		err(1, "error getting no. of system pages");
 	}
 
+	// Calculate the total RAM size
 	ramsz = (unsigned long long)(pagesz * npages) / (1024 * 1024);
 	append_info(info, info_lines, "RAM: %llu MB", ramsz);
 }
@@ -220,6 +228,7 @@ void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	double lavg[3] = {0.0};
 
+	// Get the load average
 	if (getloadavg(lavg, 3) != 3) {
 		err(1, "getloadavg() failed");
 	}
@@ -231,6 +240,7 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	long ncpu, nmax;
 	size_t sz;
 
+	// Get the number of online and configured processors
 	if ((ncpu = sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
 		err(1, "sysconf(_SC_NPROCESSORS_ONLN) failed");
 	}
@@ -238,6 +248,7 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 		err(1, "sysconf(_SC_NPROCESSORS_CONF) failed");
 	}
 
+	// Get the CPU brand or model
 	sz = sizeof buf;
 	if (sysctlbyname("machdep.cpu_brand", buf, &sz, NULL, 0) == -1) {
 		if (sysctlbyname("hw.model", buf, &sz, NULL, 0) == -1) {
@@ -251,6 +262,7 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
 	#define CELSIUS 273.15
+	// Get the temperature of each CPU core
 	for (int i = 0; i < (int)ncpu; i++) {
 		int temp = 0;
 
@@ -264,6 +276,7 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	}
 
 #elif defined(__OpenBSD__)
+	// Get the CPU temperature on OpenBSD
 	struct sensor sensors;
 	int mib[5];
 
@@ -280,6 +293,7 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	append_info(info, info_lines, "CPU Temp: %d °C", (int)((float)(sensors.value - 273150000) / 1E6));
 
 #elif defined(__NetBSD__)
+	// Get the CPU temperature on NetBSD
 	const char *const cmd = "/usr/sbin/envstat | awk '/ cpu[0-9]+ temperature: / { print $3 }'";
 	FILE *f = popen(cmd, "r");
 	if (f == NULL) {
@@ -312,6 +326,7 @@ void print_logo_and_info(Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH],
 
 	int max_lines = logo_lines > info_lines ? logo_lines : info_lines;
 
+	// Print the logo and system information side by side
 	for (int i = 0; i < max_lines; i++) {
 		if (i < logo_lines) {
 			printf("%-40s", logo->lines[i]);
@@ -378,15 +393,6 @@ noreturn static void usage(void) {
 	exit(EXIT_SUCCESS);
 }
 
-// Function to print the usage information and exit
-noreturn static void usage(void) {
-	printf("USAGE: %s [-h|-v]\n"
-		   "   -h  Show help this text.\n"
-		   "   -v  Show version information.\n",
-		   getprogname());
-	exit(EXIT_SUCCESS);
-}
-
 // Main function
 int main(int argc, char **argv) {
 	if (argc == 2) {
@@ -402,15 +408,6 @@ int main(int argc, char **argv) {
 		// Detect the OS and print the corresponding logo and system information
 		detect_and_print_logo();
 	}
-
-	return EXIT_SUCCESS;
-}
-		} else if (strcmp(argv[1], "-v") == 0) {
-			version();
-		}
-	}
-	// Detect the OS and print the corresponding logo and system information
-	detect_and_print_logo();
 
 	return EXIT_SUCCESS;
 }
