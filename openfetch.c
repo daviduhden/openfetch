@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - 2023 jhx <jhx0x00@gmail.com>
+ * Copyright (c) 2022-2023 jhx <jhx0x00@gmail.com>
  * Copyright (c) 2024-2025 David Uhden Collado <david@uhden.dev>
  *
  * Permission to use, copy, modify, and distribute this software for any
