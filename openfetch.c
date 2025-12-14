@@ -15,16 +15,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
 #include <sys/sysctl.h>
+#include <sys/types.h>
 #include <sys/utsname.h>
 #ifdef __OpenBSD__
-#include <sys/time.h>
 #include <sys/sensors.h>
+#include <sys/time.h>
+
 #include "sysctlbyname.h"
 #endif
 
+#include <sys/resource.h>
+
 #include <err.h>
+#include <errno.h>
+#include <libgen.h>
 #include <pwd.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -32,9 +37,6 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <errno.h>
-#include <sys/resource.h>
-#include <libgen.h>
 
 #define VERSION "1.0"
 
@@ -53,10 +55,12 @@ typedef struct {
 static char buf[BUFSIZ];
 
 // Function to read logo from a file
-void read_logo(Logo *logo, const char *filename) {
+void
+read_logo(Logo *logo, const char *filename)
+{
 	FILE *file;
 	char filepath1[MAX_LINE_LENGTH], filepath2[MAX_LINE_LENGTH];
-	
+
 	// Construct file paths
 	snprintf(filepath1, sizeof(filepath1), "%s%s", LOGO_PATH1, filename);
 	snprintf(filepath2, sizeof(filepath2), "%s%s", LOGO_PATH2, filename);
@@ -65,22 +69,28 @@ void read_logo(Logo *logo, const char *filename) {
 	if ((file = fopen(filepath1, "r")) == NULL) {
 		// If it fails, try the second path
 		if ((file = fopen(filepath2, "r")) == NULL) {
-			fprintf(stderr, "Error: Unable to open logo file from either path.\n");
+			fprintf(stderr, "Error: Unable to open logo file from "
+			                "either path.\n");
 			exit(1);
 		}
 	}
 
 	// Read the file line by line
 	int i = 0;
-	while (fgets(logo->lines[i], MAX_LINE_LENGTH, file) && i < MAX_LOGO_LINES) {
-		logo->lines[i][strcspn(logo->lines[i], "\n")] = 0;  // Remove newline character
+	while (fgets(logo->lines[i], MAX_LINE_LENGTH, file) &&
+	       i < MAX_LOGO_LINES) {
+		logo->lines[i][strcspn(logo->lines[i], "\n")] =
+		    0; // Remove newline character
 		i++;
 	}
 	fclose(file);
 }
 
 // Function to append formatted information to the info array
-void append_info(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines, const char *fmt, ...) {
+void
+append_info(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines,
+    const char *fmt, ...)
+{
 	if (*info_lines >= MAX_LOGO_LINES) {
 		return;
 	}
@@ -92,7 +102,9 @@ void append_info(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines, co
 }
 
 // Function to get system information
-void get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	struct utsname un;
 	char *p;
 
@@ -110,7 +122,9 @@ void get_sysinfo(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to get hostname
-void get_hostname(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_hostname(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	// Get the hostname
 	if (gethostname(buf, sizeof buf) == -1) {
 		err(1, "gethostname() failed");
@@ -119,7 +133,9 @@ void get_hostname(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to get shell information
-void get_shell(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_shell(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	struct passwd *pw;
 	char *sh, *p;
 
@@ -137,7 +153,9 @@ void get_shell(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to get user information
-void get_user(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_user(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	struct passwd *pw;
 	char *p;
 
@@ -152,7 +170,9 @@ void get_user(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to get the number of installed packages
-void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	const char *cmd;
 
 	// Select the appropriate command based on the OS
@@ -161,7 +181,7 @@ void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
 	cmd = "/usr/sbin/pkg info";
 #else
-	#error Unsupported BSD variant
+#error Unsupported BSD variant
 #endif
 
 	// Execute the command and count the number of lines in the output
@@ -185,7 +205,9 @@ void get_packages(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to get system uptime
-void get_uptime(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_uptime(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	long up, days, hours, mins;
 	struct timeval t;
 	size_t tsz = sizeof t;
@@ -203,11 +225,14 @@ void get_uptime(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	up %= 3600;
 	mins = up / 60;
 
-	append_info(info, info_lines, "Uptime: %ldd %ldh %ldm", days, hours, mins);
+	append_info(
+	    info, info_lines, "Uptime: %ldd %ldh %ldm", days, hours, mins);
 }
 
 // Function to get memory information
-void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	unsigned long long ramsz;
 	long pagesz, npages;
 
@@ -225,7 +250,9 @@ void get_memory(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to get load average
-void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	double lavg[3] = {0.0};
 
 	// Get the load average
@@ -238,7 +265,9 @@ void get_loadavg(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to get CPU information
-void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
+void
+get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines)
+{
 	long ncpu, nmax;
 	size_t sz;
 
@@ -260,10 +289,11 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 
 	buf[sz] = '\0';
 	append_info(info, info_lines, "CPU: %s", buf);
-	append_info(info, info_lines, "Cores: %ld of %ld processors online", ncpu, nmax);
+	append_info(info, info_lines, "Cores: %ld of %ld processors online",
+	    ncpu, nmax);
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
-	#define CELSIUS 273.15
+#define CELSIUS 273.15
 	// Get the temperature of each CPU core
 	for (int i = 0; i < (int)ncpu; i++) {
 		int temp = 0;
@@ -274,7 +304,8 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 			return;
 		}
 		snprintf(buf, sizeof buf, "Core [%d] Temp", i + 1);
-		append_info(info, info_lines, "%s: %.1f °C", buf, (temp * 0.1) - CELSIUS);
+		append_info(info, info_lines, "%s: %.1f °C", buf,
+		    (temp * 0.1) - CELSIUS);
 	}
 
 #elif defined(__OpenBSD__)
@@ -292,11 +323,13 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 	if (sysctl(mib, 5, &sensors, &sz, NULL, 0) == -1) {
 		return;
 	}
-	append_info(info, info_lines, "CPU Temp: %d °C", (int)((float)(sensors.value - 273150000) / 1E6));
+	append_info(info, info_lines, "CPU Temp: %d °C",
+	    (int)((float)(sensors.value - 273150000) / 1E6));
 
 #elif defined(__NetBSD__)
 	// Get the CPU temperature on NetBSD
-	const char *const cmd = "/usr/sbin/envstat | awk '/ cpu[0-9]+ temperature: / { print $3 }'";
+	const char *const cmd =
+	    "/usr/sbin/envstat | awk '/ cpu[0-9]+ temperature: / { print $3 }'";
 	FILE *f = popen(cmd, "r");
 	if (f == NULL) {
 		err(1, "popen(%s) failed", cmd);
@@ -320,9 +353,13 @@ void get_cpu(char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int *info_lines) {
 }
 
 // Function to print the logo and system information side by side
-void print_logo_and_info(Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int info_lines) {
+void
+print_logo_and_info(
+    Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH], int info_lines)
+{
 	int logo_lines = 0;
-	while (logo->lines[logo_lines][0] != '\0' && logo_lines < MAX_LOGO_LINES) {
+	while (
+	    logo->lines[logo_lines][0] != '\0' && logo_lines < MAX_LOGO_LINES) {
 		logo_lines++;
 	}
 
@@ -343,8 +380,11 @@ void print_logo_and_info(Logo *logo, char info[MAX_LOGO_LINES][MAX_LINE_LENGTH],
 	}
 }
 
-// Function to detect the OS and print the corresponding logo and system information
-void detect_and_print_logo(void) {
+// Function to detect the OS and print the corresponding logo and system
+// information
+void
+detect_and_print_logo(void)
+{
 	Logo logo = {0};
 	char info[MAX_LOGO_LINES][MAX_LINE_LENGTH] = {{0}};
 	int info_lines = 0;
@@ -359,7 +399,7 @@ void detect_and_print_logo(void) {
 #elif defined(__DragonFly__)
 	read_logo(&logo, "dragonfly.txt");
 #else
-	#error Unsupported BSD variant
+#error Unsupported BSD variant
 #endif
 
 	// Get system information
@@ -378,25 +418,29 @@ void detect_and_print_logo(void) {
 }
 
 // Function to print the version information and exit
-_Noreturn static void version(void) {
-	printf("%s - version %s (%s)\n",
-		   basename((char *)getprogname()),
-		   VERSION,
-		   __DATE__);
+_Noreturn static void
+version(void)
+{
+	printf("%s - version %s (%s)\n", basename((char *)getprogname()),
+	    VERSION, __DATE__);
 	exit(EXIT_SUCCESS);
 }
 
 // Function to print the usage information and exit
-_Noreturn static void usage(void) {
+_Noreturn static void
+usage(void)
+{
 	printf("USAGE: %s [-h|-v]\n"
-		   "   -h  Show help this text.\n"
-		   "   -v  Show version information.\n",
-		   basename((char *)getprogname()));
+	       "   -h  Show help this text.\n"
+	       "   -v  Show version information.\n",
+	    basename((char *)getprogname()));
 	exit(EXIT_SUCCESS);
 }
 
 // Main function
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
 	if (argc == 2) {
 		if (strcmp(argv[1], "-h") == 0) {
 			usage();

@@ -15,12 +15,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
 #include <sys/sysctl.h>
+#include <sys/types.h>
 
 /*
  * Declaration of the sysctlbyname function.
- * 
+ *
  * Parameters:
  * - const char *name: The name of the system control variable.
  * - void *oldp: A pointer to a buffer where the value of the system control
@@ -30,7 +30,7 @@
  * - void *newp: A pointer to a buffer containing the new value to be set for
  *   the system control variable.
  * - size_t newlen: The size of the buffer pointed to by newp.
- * 
+ *
  * Return value:
  * - Returns 0 on success, or -1 on error with errno set to indicate the error.
  */

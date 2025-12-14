@@ -20,14 +20,10 @@ struct sysctls {
 	int mib0;
 	int mib1;
 	int mib2;
-} sysctlnames[] = {
-	{ "hw.machine",     CTL_HW,     HW_MACHINE,     0},
-	{ "hw.model",       CTL_HW,     HW_MODEL,       0},
-	{ "hw.ncpu",        CTL_HW,     HW_NCPU,        0},
-	{ "hw.sensors",     CTL_HW,     HW_SENSORS,     0},
-	{ "hw.vendor",      CTL_HW,     HW_VENDOR,      0},
-	{ "hw.physmem",     CTL_HW,     HW_PHYSMEM64,   0},
-	{ "hw.usermem",     CTL_HW,     HW_USERMEM64,   0},
-	{ "hw.ncpuonline",  CTL_HW,     HW_NCPUONLINE,  0},
-	{ "kern.boottime",  CTL_KERN,   KERN_BOOTTIME,  0}
-};
+} sysctlnames[] = {{"hw.machine", CTL_HW, HW_MACHINE, 0},
+    {"hw.model", CTL_HW, HW_MODEL, 0}, {"hw.ncpu", CTL_HW, HW_NCPU, 0},
+    {"hw.sensors", CTL_HW, HW_SENSORS, 0}, {"hw.vendor", CTL_HW, HW_VENDOR, 0},
+    {"hw.physmem", CTL_HW, HW_PHYSMEM64, 0},
+    {"hw.usermem", CTL_HW, HW_USERMEM64, 0},
+    {"hw.ncpuonline", CTL_HW, HW_NCPUONLINE, 0},
+    {"kern.boottime", CTL_KERN, KERN_BOOTTIME, 0}};

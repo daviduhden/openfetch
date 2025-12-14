@@ -15,18 +15,20 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
+#include "sysctlbyname.h"
+
 #include <sys/sysctl.h>
+#include <sys/types.h>
 
 #include <errno.h>
 #include <string.h>
 
 #include "openbsd_internal.h"
-#include "sysctlbyname.h"
 
 // Function to get or set a sysctl value by its name
-int sysctlbyname(const char *name, void *oldp, size_t *oldlenp,
-	void *newp, size_t newlen)
+int
+sysctlbyname(
+    const char *name, void *oldp, size_t *oldlenp, void *newp, size_t newlen)
 {
 	int mib[2];
 
@@ -37,7 +39,8 @@ int sysctlbyname(const char *name, void *oldp, size_t *oldlenp,
 			mib[0] = sysctlnames[i].mib0;
 			mib[1] = sysctlnames[i].mib1;
 
-			// Call sysctl with the MIB values to get or set the value
+			// Call sysctl with the MIB values to get or set the
+			// value
 			return sysctl(mib, 2, oldp, oldlenp, newp, newlen);
 		}
 	}
@@ -48,4 +51,3 @@ int sysctlbyname(const char *name, void *oldp, size_t *oldlenp,
 	// Return -1 to indicate failure
 	return (-1);
 }
-
