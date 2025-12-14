@@ -14,6 +14,7 @@ CFLAGS+=	-Wall -Wconversion -Wshadow -Wextra -Wpedantic
 
 # Debugging flags
 DFLAGS=	-g -ggdb
+INFO=	==> 
 
 # Executable and debug target names
 EXE=	openfetch
@@ -32,12 +33,12 @@ MAN=	openfetch.1
 
 # Rule to build the executable
 ${EXE}: ${SRC}
-	@echo "Building ${EXE}..."
+	@echo "${INFO} Building ${EXE}"
 	@${CC} ${CFLAGS} -s -o $@ $>
 
 # Rule to build the debug version
 ${DBG}: ${SRC}
-	@echo "Building debug version ${DBG}..."
+	@echo "${INFO} Building debug version ${DBG}"
 	@${CC} ${DFLAGS} -o $@ $>
 
 # Default target to build both release and debug versions
@@ -47,31 +48,34 @@ all: ${EXE} ${DBG}
 # Phony target to clean up build artifacts
 .PHONY: clean
 clean:
-	@echo "Cleaning up..."
+	@echo "${INFO} Cleaning build artifacts"
 	@rm -f ${EXE} ${DBG}
+	@echo "${INFO} Clean complete"
 
 # Phony target to install the executable and other files
 .PHONY: install
 install: ${EXE}
-	@echo "Installing ${EXE} to /usr/local/bin..."
+	@echo "${INFO} Installing ${EXE} -> /usr/local/bin/${EXE}"
 	@install -d /usr/local/bin
 	@install -m 755 ${EXE} /usr/local/bin
-	@echo "Installing logo files to /usr/local/share/doc/logo/..."
+	@echo "${INFO} Installing logo files -> /usr/local/share/doc/logo/"
 	@install -d /usr/local/share/doc/logo
 	@install -m 644 logo/* /usr/local/share/doc/logo/
-	@echo "Installing man page to /usr/local/man/man1..."
+	@echo "${INFO} Installing man page -> /usr/local/man/man1/${MAN}"
 	@install -d /usr/local/man/man1
 	@install -m 644 ${MAN} /usr/local/man/man1
+	@echo "${INFO} Install complete"
 
 # Phony target to uninstall the executable and other files
 .PHONY: uninstall
 uninstall:
-	@echo "Uninstalling ${EXE} from /usr/local/bin..."
+	@echo "${INFO} Removing /usr/local/bin/${EXE}"
 	@rm -f /usr/local/bin/${EXE}
-	@echo "Removing /usr/local/share/doc/logo/..."
+	@echo "${INFO} Removing /usr/local/share/doc/logo/"
 	@rm -rf /usr/local/share/doc/logo/
-	@echo "Removing man page from /usr/local/man/man1..."
+	@echo "${INFO} Removing /usr/local/man/man1/${MAN}"
 	@rm -f /usr/local/man/man1/${MAN}
+	@echo "${INFO} Uninstall complete"
 
 # Phony target to display help
 .PHONY: help
